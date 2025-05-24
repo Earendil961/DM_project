@@ -23,11 +23,36 @@ def create_gk(x, n, k):
     return gk
 
 def t_d(n, gd):
-    return 0
+    arr = {}
+    for i in range(n):
+      arr[i] = []
+    for i in range(n):
+      for j in range(n):
+        if gd[i][j]==1:
+          arr[i].append(j)
+          arr[j].append(i)
+    ans = set()
+    all_ver = set(arr.keys())
+    
+    while all_ver:
+        v = min(all_ver, key=lambda x: len(arr[x]))
+        ans.add(v)
+        all_ver.remove(v)
+        all_ver -= set(arr[v])
+    
+    return len(ans)
 
 def t_k(n, gk):
-    degrees = np.sum(gk, axis=1)
-    return np.max(degrees) if n > 0 else 0
+    arr = np.zeros(n)
+    for i in range(n):
+      for j in range(n):
+        if gk[i][j]==1:
+          arr[i]= arr[i] + 1
+    m =0
+    for i in range(n):
+      if m<arr[i]:
+        m = arr[i]
+    return m
 
 def td_2(adj_matrix):
     n = len(adj_matrix)
