@@ -114,7 +114,7 @@ def Analyze_of_parametrs(param_range, n, input_k_or_d, type_analyze):
 
     plt.figure()
     plt.plot(param_range, t_values)
-    plt.xlabel('Parameter k or d value')
+    plt.xlabel('Parameter value')
     plt.ylabel(f'T value')
     plt.grid()
     plt.show()
@@ -147,7 +147,10 @@ def Analyze_for_k_and_d(par_1_or_2, n, input_k_or_d_mas, type_analyze):
 
     plt.figure()
     plt.plot(input_k_or_d_mas, t_values)
-    plt.xlabel('Parameter value')
+    if type_analyze == 'stud' or type_analyze == 'weib':
+      plt.xlabel('Parameter k value')
+    else:
+      plt.xlabel('Parameter d value')
     plt.ylabel(f'T value')
     plt.grid()
     plt.show()
@@ -209,7 +212,7 @@ if __name__ == "__main__":
   # =========== 2 ======================
   print("Анализ четырех функций по k, d и n")
   print("1) stud")
-  n_range = range(50, 500, 50)
+  n_range = range(50, 400, 10)
   k_range = range(2, 20)
   Analyze_for_k_and_d(par_1, n, k_range, 'stud')
   Analyze_of_n(par_1, n, 'stud', n_range, input_k)
@@ -220,7 +223,7 @@ if __name__ == "__main__":
   Analyze_of_n(par_2, n, 'lap', n_range, input_d)
  
   print("3) weib")
-  n_range = range(50, 100, 5)
+  n_range = range(50, 100, 2)
   k_range = range(2, 20)
   Analyze_for_k_and_d(par_3, n, k_range, 'weib')
   Analyze_of_n(par_3, n, 'weib', n_range, input_k)
