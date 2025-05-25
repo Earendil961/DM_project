@@ -91,31 +91,41 @@ def number_of_connectivity_components(data):
     return count
 
 
-def Analyze_of_parametrs(param_range, n, input_k_or_d, type_analyze):
+def Analyze_of_parametrs(param_range, n, input_k_or_d, type_analyze, type_func):
     t_values = []
+    t_val = -1
+    samples = []
     for param in param_range:
-        if type_analyze == 'stud':
+        if type_func == 'stud':
             samples = np.random.standard_t(df=param, size=n)
+            samples.sort()
+        elif type_func == 'lap':
+            samples = np.random.laplace(loc=0, scale=param, size=n)
+            samples.sort()
+        elif type_func == 'weib':
+            samples = np.random.weibull(a=1/2, size=n) * param
+            samples.sort()
+        elif type_func == 'exp':
+            samples = np.random.exponential(scale=1/param, size=n)
+            samples.sort()
+        if type_analyze == 'max_degree':
             graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
             t_val = max_degree(n, graph)
-        elif type_analyze == 'lap':
-            samples = np.random.laplace(loc=0, scale=param, size=n)
+        elif type_analyze == 'size_max_independent_set':
             graph = create_gd(samples, n, input_k_or_d)
             t_val = size_max_independent_set(n, graph)
-        elif type_analyze == 'weib':
-            samples = np.random.weibull(a=1/2, size=n) * param
+        elif type_analyze == 'number_of_connectivity_components':
             graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
             t_val = number_of_connectivity_components(graph)
-        else:
-            samples = np.random.exponential(scale=1/param, size=n)
+        elif type_analyze == 'size_max_clique':
             graph = create_gd(samples, n, input_k_or_d)
             t_val = size_max_clique(graph)
         t_values.append(t_val)
 
     plt.figure()
     plt.plot(param_range, t_values)
-    plt.xlabel('Parameter value')
-    plt.ylabel(f'T value')
+    plt.xlabel('Parameter value, ' + type_func)
+    plt.ylabel(f'Parameter {type_analyze} value')
     plt.grid()
     plt.show()
 
@@ -198,16 +208,20 @@ if __name__ == "__main__":
   n = 100
   print("Анализ четырех функций по их параметрам")
   param_range = np.linspace(2, 30, 100)
-  Analyze_of_parametrs(param_range, n, input_k, 'stud')
+  Analyze_of_parametrs(param_range, n, input_k, 'max_degree', 'stud')
+  Analyze_of_parametrs(param_range, n, input_k, 'max_degree', 'lap')
 
   param_range = np.linspace(0.5, 10, 70)
-  Analyze_of_parametrs(param_range, n, input_d, 'lap')
+  Analyze_of_parametrs(param_range, n, input_d, 'size_max_independent_set', 'stud')
+  Analyze_of_parametrs(param_range, n, input_d, 'size_max_independent_set', 'lap')
 
   param_range = np.linspace(2, 30, 45)
-  Analyze_of_parametrs(param_range, n, input_k, 'weib')
+  Analyze_of_parametrs(param_range, n, input_k, 'number_of_connectivity_components', 'weib')
+  Analyze_of_parametrs(param_range, n, input_k, 'number_of_connectivity_components', 'exp')
 
   param_range = np.linspace(0.5, 10, 60)
-  Analyze_of_parametrs(param_range, n, input_d, 'exp')
+  Analyze_of_parametrs(param_range, n, input_d, 'size_max_clique', 'weib')
+  Analyze_of_parametrs(param_range, n, input_d, 'size_max_clique', 'exp')
 
   # =========== 2 ======================
   print("Анализ четырех функций по k, d и n")
