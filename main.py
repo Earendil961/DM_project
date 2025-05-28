@@ -11,15 +11,20 @@ def create_gd(x2, n, d):
                 gd[j][i] = True
     return gd
 
+
 def create_gk(x, n, k):
     n_neighbors = NearestNeighbors(n_neighbors=k).fit(x)
     distances, indices = n_neighbors.kneighbors(x)
     gk = np.zeros((n, n), dtype=bool)
+    neighbors_sets = [set() for i in range(n)]
     for i in range(n):
-        for j in range(1, k):
-            neighbor = indices[i][j]
-            gk[i][neighbor] = True
-            gk[neighbor][i] = True
+        neighbors = indices[i][1:k]
+        neighbors_sets[i].update(neighbors)
+    for i in range(n):
+        for j in neighbors_sets[i]:
+            if i in neighbors_sets[j]:
+                gk[i][j] = True
+                gk[j][i] = True
     return gk
 
 def size_max_independent_set(n, gd):
@@ -144,13 +149,21 @@ def Analyze_for_k_and_d(par_1_or_2, n, input_k_or_d_mas, type_analyze):
         if type_analyze == 'stud':
             graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
             t_val = max_degree(n, graph)
+            graph = create_gd(samples, n, input_k_or_d)
+            t_val = size_max_independent_set(n, graph)
         elif type_analyze == 'lap':
+            graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
+            t_val = max_degree(n, graph)
             graph = create_gd(samples, n, input_k_or_d)
             t_val = size_max_independent_set(n, graph)
         elif type_analyze == 'weib':
             graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
             t_val = number_of_connectivity_components(graph)
+            graph = create_gd(samples, n, input_k_or_d)
+            t_val = size_max_clique(graph)
         else:
+            graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
+            t_val = number_of_connectivity_components(graph)
             graph = create_gd(samples, n, input_k_or_d)
             t_val = size_max_clique(graph)
         t_values.append(t_val)
@@ -172,16 +185,24 @@ def Analyze_of_n(par_1_or_2, n, type_analyze, n_range, input_k_or_d1):
             samples1 = np.random.standard_t(df=par_1_or_2, size=n1)
             graph1 = create_gk(samples1.reshape(-1, 1), n1, input_k_or_d1)
             t_val = max_degree(n1, graph1)
+            graph1 = create_gd(samples1, n1, input_k_or_d1)
+            t_val = size_max_independent_set(n1, graph1)
         elif type_analyze == 'lap':
             samples1 = np.random.laplace(loc=0, scale=par_1_or_2, size=n1)
+            graph1 = create_gk(samples1.reshape(-1, 1), n1, input_k_or_d1)
+            t_val = max_degree(n1, graph1)
             graph1 = create_gd(samples1, n1, input_k_or_d1)
             t_val = size_max_independent_set(n1, graph1)
         elif type_analyze == 'weib':
             samples1 = np.random.weibull(a=1/2, size=n1) * par_1_or_2
             graph1 = create_gk(samples1.reshape(-1, 1), n1, input_k_or_d1)
             t_val = number_of_connectivity_components(graph1)
+            graph1 = create_gd(samples1, n1, input_k_or_d1)
+            t_val = size_max_clique(graph1)
         else:
             samples1 = np.random.exponential(scale=1/par_1_or_2, size=n1)
+            graph1 = create_gk(samples1.reshape(-1, 1), n1, input_k_or_d1)
+            t_val = number_of_connectivity_components(graph1)
             graph1 = create_gd(samples1, n1, input_k_or_d1)
             t_val = size_max_clique(graph1)
         t_values1.append(t_val)
@@ -192,6 +213,35 @@ def Analyze_of_n(par_1_or_2, n, type_analyze, n_range, input_k_or_d1):
     plt.ylabel(f'T value')
     plt.grid()
     plt.show()
+
+def find_A_1(n, graph_tipe, input_k_or_d1, iterations):
+    values1 = {}
+    values2 = {}
+    for i in range(iterations):
+        samples1 = np.random.standard_t(df=3, size=n)
+        samples2 = np.random.standard_t(df=0.70710678118, size=n)
+        if graph_tipe == 'knn':
+            graph1 = create_gk(samples1.reshape(-1, 1), n, input_k_or_d1)
+            graph2 = create_gk(samples2.reshape(-1, 1), n, input_k_or_d1)
+            t_val_1 = max_degree(n, graph1)
+            t_val_2 = max_degree(n, graph2)
+        else:
+            graph1 = create_gd(samples1, n, input_k_or_d1)
+            graph1 = create_gd(samples2, n, input_k_or_d1)
+            t_val_1 = size_max_independent_set(n, graph1)
+            t_val_2 = size_max_independent_set(n, graph1)
+        values1[t_val_1] = values1.get(t_val_1, 0) + 1
+        values2[t_val_2] = values1.get(t_val_2, 0) + 1
+    for i in values1.values():
+        values1[i] /= iterations
+    for i in values2.values():
+        values2[i] /= iterations
+    error = 0
+    while True:
+        pass  # надо доделать
+
+
+
 
 
 if __name__ == "__main__":
@@ -211,11 +261,11 @@ if __name__ == "__main__":
   Analyze_of_parametrs(param_range, n, input_k, 'max_degree', 'stud')
   Analyze_of_parametrs(param_range, n, input_k, 'max_degree', 'lap')
 
-  param_range = np.linspace(0.5, 10, 70)
+  param_range = np.linspace(2, 30, 100)
   Analyze_of_parametrs(param_range, n, input_d, 'size_max_independent_set', 'stud')
   Analyze_of_parametrs(param_range, n, input_d, 'size_max_independent_set', 'lap')
 
-  param_range = np.linspace(2, 30, 45)
+  param_range = np.linspace(0.5, 10, 70)
   Analyze_of_parametrs(param_range, n, input_k, 'number_of_connectivity_components', 'weib')
   Analyze_of_parametrs(param_range, n, input_k, 'number_of_connectivity_components', 'exp')
 
