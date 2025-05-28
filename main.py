@@ -218,7 +218,7 @@ def find_A_1(n, graph_tipe, input_k_or_d1, iterations):
     values2 = {}
     for i in range(iterations):
         samples1 = np.random.standard_t(df=3, size=n)
-        samples2 = np.random.standard_t(df=0.70710678118, size=n)
+        samples2 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
         if graph_tipe == 'knn':
             graph1 = create_gk(samples1.reshape(-1, 1), n, input_k_or_d1)
             graph2 = create_gk(samples2.reshape(-1, 1), n, input_k_or_d1)
@@ -226,9 +226,9 @@ def find_A_1(n, graph_tipe, input_k_or_d1, iterations):
             t_val_2 = max_degree(n, graph2)
         else:
             graph1 = create_gd(samples1, n, input_k_or_d1)
-            graph1 = create_gd(samples2, n, input_k_or_d1)
+            graph2 = create_gd(samples2, n, input_k_or_d1)
             t_val_1 = size_max_independent_set(n, graph1)
-            t_val_2 = size_max_independent_set(n, graph1)
+            t_val_2 = size_max_independent_set(n, graph2)
         values1[t_val_1] = values1.get(t_val_1, 0) + 1
         values2[t_val_2] = values1.get(t_val_2, 0) + 1
     for i in values1.values():
@@ -236,11 +236,66 @@ def find_A_1(n, graph_tipe, input_k_or_d1, iterations):
     for i in values2.values():
         values2[i] /= iterations
     error = 0
+    power = 0
+    a = []
     while True:
-        pass  # надо доделать
+        current_error = 1000
+        current_power = 1000
+        current_a = -1
+        alpha = 1 - 0.05**5
+        for i in values1.keys():
+            if values1.get(i, 0) <= current_power:
+                current_power = values1.get(i, 0)
+                current_error = values2.get(i, 0)
+                current_a = i
+        a.append(current_a)
+        power += current_power
+        error += current_error
+        if current_error >= alpha:
+            break
+    return a
 
-
-
+def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
+    values1 = {}
+    values2 = {}
+    for i in range(iterations):
+        samples1 = np.random.weibull(a=1/2, size=n) * 0.31622776601
+        samples2 = np.random.exponential(scale=1, size=n)
+        if graph_tipe == 'knn':
+            graph1 = create_gk(samples1.reshape(-1, 1), n, input_k_or_d1)
+            graph2 = create_gk(samples2.reshape(-1, 1), n, input_k_or_d1)
+            t_val_1 = number_of_connectivity_components(graph1)
+            t_val_2 = number_of_connectivity_components(graph2)
+        else:
+            graph1 = create_gd(samples1, n, input_k_or_d1)
+            graph2 = create_gd(samples2, n, input_k_or_d1)
+            t_val_1 = size_max_clique(graph1)
+            t_val_2 = size_max_clique(graph2)
+        values1[t_val_1] = values1.get(t_val_1, 0) + 1
+        values2[t_val_2] = values1.get(t_val_2, 0) + 1
+    for i in values1.values():
+        values1[i] /= iterations
+    for i in values2.values():
+        values2[i] /= iterations
+    error = 0
+    power = 0
+    a = []
+    while True:
+        current_error = 1000
+        current_power = 1000
+        current_a = -1
+        alpha = 1 - 0.05**5
+        for i in values1.keys():
+            if values1.get(i, 0) <= current_power:
+                current_power = values1.get(i, 0)
+                current_error = values2.get(i, 0)
+                current_a = i
+        a.append(current_a)
+        power += current_power
+        error += current_error
+        if current_error >= alpha:
+            break
+    return a
 
 
 if __name__ == "__main__":
