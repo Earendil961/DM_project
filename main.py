@@ -1,6 +1,10 @@
 import numpy as np
 from sklearn.neighbors import NearestNeighbors
 import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import classification_report, accuracy_score
+import pandas as pd
 
 def create_gd(x2, n, d):
     gd = np.zeros((n, n), dtype=bool)
@@ -306,6 +310,92 @@ def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
             break
     return a
 
+#==========================================================================================================
+def extract_multiple_features(samples, n, k_or_d, graph_type):
+    features = []   
+    if graph_type == 'stud':
+        graph = create_gd(samples, n, k_or_d)
+        features.append(max_degree(n, graph))
+        features.append(number_of_connectivity_components(graph))
+    else:
+        graph = create_gd(samples, n, k_or_d)
+        features.append(size_max_independent_set(n, graph))
+        features.append(size_max_clique(graph))  
+    return features
+
+def build_classifier(n, k_or_d, dist1, dist2, iterations=50):
+    X = []
+    y = []
+    
+    for i in range(iterations):
+        if dist1 == 'stud':
+            samples1 = np.random.standard_t(df=3, size=n)
+        elif dist1 == 'lap':
+            samples1 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
+        elif dist1 == 'weib':
+            samples1 = np.random.weibull(a=1/2, size=n) * 0.31622776601
+        elif dist1 == 'exp':
+            samples1 = np.random.exponential(scale=1, size=n)
+            
+        features1 = extract_multiple_features(samples1, n, k_or_d, dist1)
+        X.append(features1)
+        y.append(0)
+        
+        if dist2 == 'stud':
+            samples2 = np.random.standard_t(df=3, size=n)
+        elif dist2 == 'lap':
+            samples2 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
+        elif dist2 == 'weib':
+            samples2 = np.random.weibull(a=1/2, size=n) * 0.31622776601
+        elif dist2 == 'exp':
+            samples2 = np.random.exponential(scale=1, size=n)
+            
+        features2 = extract_multiple_features(samples2, n, k_or_d, dist1)
+        X.append(features2)
+        y.append(1) 
+    
+    if dist1 == 'stud':
+      feature_names = ['max_degree', 'number_of_connectivity_components']
+    else:
+      feature_names = ['size_max_independent_set', 'size_max_clique']
+    df = pd.DataFrame(X, columns=feature_names)
+    df['target'] = y
+    
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    
+    clf = RandomForestClassifier(n_estimators=100, random_state=42)
+    clf.fit(X_train, y_train)
+    
+
+    y_pred = clf.predict(X_test)
+    print("Точность:", accuracy_score(y_test, y_pred))
+
+    print("\nВажность признаков:")
+    for name, importance in zip(feature_names, clf.feature_importances_):
+        print(f"{name}: {importance:.4f}")
+    return clf, df
+
+def analyze_feature_importance_vs_n(n_range, k_or_d, dist1, dist2):
+    importance_results = {}
+    
+    for n in n_range:
+        print(f"\nАнализ для n = {n}")
+        clf, df = build_classifier(n, k_or_d, dist1, dist2, iterations=50)
+        
+        importance_results[n] = clf.feature_importances_
+    
+    plt.figure(figsize=(12, 6))
+    for feature_idx in range(len(clf.feature_importances_)):
+        importances = [importance_results[n][feature_idx] for n in n_range]
+        plt.plot(n_range, importances, label=f'Признак {feature_idx}')
+    
+    plt.xlabel('Размер выборки n')
+    plt.ylabel('Важность признака')
+    plt.title('Зависимость важности признаков от размера выборки')
+    plt.legend()
+    plt.grid()
+    plt.show()
+#==========================================================================================================
 
 if __name__ == "__main__":
 
@@ -316,9 +406,10 @@ if __name__ == "__main__":
 
   input_k = int(input("Введите k: "))
   input_d = float(input("Введите d: "))
+  n = 100
 
   # =========== 1 ======================
-  n = 100
+  '''
   print("Анализ четырех функций по их параметрам")
   param_range = np.linspace(2, 30, 100)
   Analyze_of_parametrs(param_range, n, input_k, 'max_degree', 'stud')
@@ -352,7 +443,7 @@ if __name__ == "__main__":
   Analyze_for_k_and_d(par_1, n, d_range, 'stud', 'size_max_independent_set')
   Analyze_of_n(par_2, 'lap', n_range, input_d, 'size_max_independent_set')
   Analyze_of_n(par_2, 'stud', n_range, input_d, 'size_max_independent_set')
- 
+
   print("3) number_of_connectivity_components")
   n_range = range(50, 100, 2)
   k_range = range(2, 20)
@@ -367,7 +458,22 @@ if __name__ == "__main__":
   Analyze_for_k_and_d(par_4, n, d_range, 'weib', 'size_max_clique')
   Analyze_of_n(par_3, 'exp', n_range, input_d, 'size_max_clique')
   Analyze_of_n(par_4, 'weib', n_range, input_d, 'size_max_clique')
+  '''
   # =========== 3 ======================
   print("Построение множества А")
 
   # ============= Часть 2 =================
+
+  # =========== 1 ======================
+  print("Исследование важности характеристик")
+    
+  print("\nСравнение t-распределения Стьюдента и Лапласа:")
+  clf_knn, df_knn = build_classifier(n, input_k, 'stud', 'lap')
+    
+  print("\nСравнение распределений Вейбулла и экспоненциального:")
+  clf_dist, df_dist = build_classifier(n, input_d, 'weib', 'exp')
+    
+  print("\nАнализ важности признаков в зависимости от размера выборки:")
+  n_range = range(20, 51, 5)
+  analyze_feature_importance_vs_n(n_range, input_k, 'stud', 'lap')
+  analyze_feature_importance_vs_n(n_range, input_k, 'weib', 'exp')
