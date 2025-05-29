@@ -267,7 +267,7 @@ def find_A_1(n, graph_type, input_k_or_d1, iterations):
         error += current_error
         values1.pop(current_a, None)
         values2.pop(current_a, None)
-        if not values1 or current_error >= alpha:
+        if not values1 or error >= alpha:
             break
     print('power A1 = ', power)
     print('error A1 = ', error)
@@ -315,7 +315,7 @@ def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
         error += current_error
         values1.pop(current_a, None)
         values2.pop(current_a, None)
-        if not values1 or current_error >= alpha:
+        if not values1 or error >= alpha:
             break
     print('power A2 = ', power)
     print('error A2 = ', error)
