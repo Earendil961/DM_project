@@ -641,6 +641,7 @@ if __name__ == "__main__":
     analyze_feature_importance_vs_n(n_range, input_d, 'weib', 'exp')
 
     # =========== 2 ======================
-    n_values = [25, 100, 500]
-    Analyze_of_metric(n_values, input_d, 'stud', 'lap')
+    n_range = [25, 100, 500]
+    Analyze_of_metric(n_range, input_d, 'stud', 'lap')
+    Analyze_of_metric(n_range, input_d, 'weib', 'exp')
     # =========== 3 ======================
