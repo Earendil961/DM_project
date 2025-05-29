@@ -324,14 +324,14 @@ def extract_multiple_features(samples, n, k_or_d, graph_type):
     if graph_type == 'stud':
         graph = create_gd(samples, n, k_or_d)
         features.append(max_degree(n, graph))
-        features.append(number_of_connectivity_components(graph))
+        features.append(size_max_independent_set(n, graph))
     else:
         graph = create_gd(samples, n, k_or_d)
-        features.append(size_max_independent_set(n, graph))
+        features.append(number_of_connectivity_components(graph))
         features.append(size_max_clique(graph))  
     return features
 
-def build_classifier(n, k_or_d, dist1, dist2, iterations=50):
+def build_classifier(n, k_or_d, dist1, dist2, type1, iterations=50):
     X = []
     y = []
     
@@ -363,9 +363,9 @@ def build_classifier(n, k_or_d, dist1, dist2, iterations=50):
         y.append(1) 
     
     if dist1 == 'stud':
-      feature_names = ['max_degree', 'number_of_connectivity_components']
+      feature_names = ['max_degree', 'size_max_independent_set']
     else:
-      feature_names = ['size_max_independent_set', 'size_max_clique']
+      feature_names = ['number_of_connectivity_components', 'size_max_clique']
     df = pd.DataFrame(X, columns=feature_names)
     df['target'] = y
     
@@ -374,12 +374,9 @@ def build_classifier(n, k_or_d, dist1, dist2, iterations=50):
     clf = RandomForestClassifier(n_estimators=100, random_state=42)
     clf.fit(X_train, y_train)
     
-
-    y_pred = clf.predict(X_test)
-    print("Точность:", accuracy_score(y_test, y_pred))
-
-    print("\nВажность признаков:")
-    for name, importance in zip(feature_names, clf.feature_importances_):
+    if type1 == 'har_analyse':
+      y_pred = clf.predict(X_test)
+      for name, importance in zip(feature_names, clf.feature_importances_):
         print(f"{name}: {importance:.4f}")
     return clf, df
 
@@ -387,9 +384,7 @@ def analyze_feature_importance_vs_n(n_range, k_or_d, dist1, dist2):
     importance_results = {}
     
     for n in n_range:
-        print(f"\nАнализ для n = {n}")
-        clf, df = build_classifier(n, k_or_d, dist1, dist2, iterations=50)
-        
+        clf, df = build_classifier(n, k_or_d, dist1, dist2,'n_analyse', iterations=50)       
         importance_results[n] = clf.feature_importances_
     
     plt.figure(figsize=(12, 6))
@@ -397,9 +392,9 @@ def analyze_feature_importance_vs_n(n_range, k_or_d, dist1, dist2):
         importances = [importance_results[n][feature_idx] for n in n_range]
         plt.plot(n_range, importances, label=f'Признак {feature_idx}')
     
-    plt.xlabel('Размер выборки n')
+    plt.xlabel('Размер n')
     plt.ylabel('Важность признака')
-    plt.title('Зависимость важности признаков от размера выборки')
+    plt.title('Зависимость важности от n')
     plt.legend()
     plt.grid()
     plt.show()
@@ -482,16 +477,19 @@ if __name__ == "__main__":
     # ============= Часть 2 =================
 
     # =========== 1 ======================
+    print("\n")
     print("Исследование важности характеристик")
-
-
-    clf_knn, df_knn = build_classifier(n, input_k, 'stud', 'lap')
-    clf_dist, df_dist = build_classifier(n, input_d, 'weib', 'exp')
-
-    print("\nАнализ важности признаков в зависимости от размера выборки:")
-    n_range = range(20, 51, 5)
-    analyze_feature_importance_vs_n(n_range, input_k, 'stud', 'lap')
-    analyze_feature_importance_vs_n(n_range, input_k, 'weib', 'exp')
+    print("\n")  
+    print("1)Важность признаков у stud и lap")
+    clf_knn, df_knn = build_classifier(n, input_d, 'stud', 'lap', 'har_analyse')
+    print("\n")
+    print("2)Важность признаков у exp и weib")   
+    clf_dist, df_dist = build_classifier(n, input_d, 'weib', 'exp', 'har_analyse')
+    print("\n")
+    print("Анализ важности признаков в зависимости от размера выборки:")
+    n_range = range(20, 201, 40)
+    analyze_feature_importance_vs_n(n_range, input_d, 'stud', 'lap')
+    analyze_feature_importance_vs_n(n_range, input_d, 'weib', 'exp')
 
     # =========== 2 ======================
 
