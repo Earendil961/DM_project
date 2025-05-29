@@ -251,6 +251,8 @@ def find_A_1(n, graph_tipe, input_k_or_d1, iterations):
         a.append(current_a)
         power += current_power
         error += current_error
+        values1.pop(current_a)
+        values2.pop(current_a)
         if current_error >= alpha:
             break
     return a
@@ -293,6 +295,8 @@ def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
         a.append(current_a)
         power += current_power
         error += current_error
+        values1.pop(current_a)
+        values2.pop(current_a)
         if current_error >= alpha:
             break
     return a
