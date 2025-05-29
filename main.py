@@ -398,6 +398,93 @@ def analyze_feature_importance_vs_n(n_range, k_or_d, dist1, dist2):
     plt.legend()
     plt.grid()
     plt.show()
+
+def test_classifier_1(classifier, dist, n=50):
+    targets = [1] * n + [0] * n
+    true_true = 0
+    true_false = 0
+    false_true = 0
+    false_false = 0
+    for i in range(n):
+        samples = np.random.standard_t(df=3, size=n)
+        graph = create_gd(samples, n, dist)
+        a = max_degree(n, graph)
+        b = size_max_independent_set(n, graph)
+        predict = classifier(a, b)
+        if predict == targets[i]:
+            if targets[i] == 1:
+                true_true += 1
+            else:
+                true_false += 1
+        else:
+            if targets[i] == 1:
+                false_true += 1
+            else:
+                false_false += 1
+    for i in range(n, 2 * n):
+        samples = np.random.laplace(loc=0, scale=0.70710678118, size=n)
+        graph = create_gd(samples, n, dist)
+        a = max_degree(n, graph)
+        b = size_max_independent_set(n, graph)
+        predict = classifier(a, b)
+        if predict == targets[i]:
+            if targets[i] == 1:
+                true_true += 1
+            else:
+                true_false += 1
+        else:
+            if targets[i] == 1:
+                false_true += 1
+            else:
+                false_false += 1
+    print('Ошибка первого рода: ', true_false / 2 * n)
+    print('Мощность: ', true_true / 2 * n)
+    print('Точность: ', (true_true + false_false) / 2 * n)
+    return [true_false / 2 * n, true_true / 2 * n, (true_true + false_false) / 2 * n]
+
+def test_classifier_2(classifier, dist, n=50):
+    targets = [1] * n + [0] * n
+    true_true = 0
+    true_false = 0
+    false_true = 0
+    false_false = 0
+    for i in range(n):
+        samples = np.random.weibull(a=1/2, size=n) * 0.31622776601
+        graph = create_gd(samples, n, dist)
+        a = number_of_connectivity_components(graph)
+        b = size_max_clique(graph)
+        predict = classifier(a, b)
+        if predict == targets[i]:
+            if targets[i] == 1:
+                true_true += 1
+            else:
+                true_false += 1
+        else:
+            if targets[i] == 1:
+                false_true += 1
+            else:
+                false_false += 1
+    for i in range(n, 2 * n):
+        samples = np.random.exponential(scale=1, size=n)
+        graph = create_gd(samples, n, dist)
+        a = number_of_connectivity_components(graph)
+        b = size_max_clique(graph)
+        predict = classifier(a, b)
+        if predict == targets[i]:
+            if targets[i] == 1:
+                true_true += 1
+            else:
+                true_false += 1
+        else:
+            if targets[i] == 1:
+                false_true += 1
+            else:
+                false_false += 1
+    print('Ошибка первого рода: ', true_false / 2 * n)
+    print('Мощность: ', true_true / 2 * n)
+    print('Точность: ', (true_true + false_false) / 2 * n)
+    return [true_false / 2 * n, true_true / 2 * n, (true_true + false_false) / 2 * n]
+
 #==========================================================================================================
 
 if __name__ == "__main__":
