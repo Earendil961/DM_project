@@ -256,7 +256,7 @@ def find_A_1(n, graph_type, input_k_or_d1, iterations):
         current_error = 1000
         current_a = None
         for key in values2:
-            if values1[key] < current_power:
+            if values1.get(key, 0) < current_power:
                 current_power = values1.get(key, 0)
                 current_error = values2.get(key, 0)
                 current_a = key
@@ -304,7 +304,7 @@ def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
         current_error = 1000
         current_a = None
         for key in values2:
-            if values1[key] < current_power:
+            if values1.get(key, 0) < current_power:
                 current_power = values1.get(key, 0)
                 current_error = values2.get(key, 0)
                 current_a = key
