@@ -262,7 +262,9 @@ def find_A_1(n, graph_type, input_k_or_d1, iterations):
         values2.pop(current_a, None)
         if not values1 or current_error >= alpha:
             break
-    return a, power, error
+    print('power A1 = ', power)
+    print('error A1 = ', error)
+    return a
 
 def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
     values1 = {}
@@ -308,7 +310,9 @@ def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
         values2.pop(current_a, None)
         if not values1 or current_error >= alpha:
             break
-    return a, power, error
+    print('power A2 = ', power)
+    print('error A2 = ', error)
+    return a
 
 #==========================================================================================================
 def extract_multiple_features(samples, n, k_or_d, graph_type):
@@ -399,82 +403,92 @@ def analyze_feature_importance_vs_n(n_range, k_or_d, dist1, dist2):
 
 if __name__ == "__main__":
 
-  par_1 = 3
-  par_2 = 0.70710678118
-  par_3 = 0.31622776601
-  par_4 = 1
+    par_1 = 3
+    par_2 = 0.70710678118
+    par_3 = 0.31622776601
+    par_4 = 1
 
-  input_k = int(input("Введите k: "))
-  input_d = float(input("Введите d: "))
-  n = 100
+    input_k = int(input("Введите k: "))
+    input_d = float(input("Введите d: "))
+    n = 100
 
-  # =========== 1 ======================
-  print("Анализ четырех функций по их параметрам")
-  param_range = np.linspace(2, 30, 100)
-  Analyze_of_parametrs(param_range, n, input_k, 'max_degree', 'stud')
-  Analyze_of_parametrs(param_range, n, input_k, 'max_degree', 'lap')
+    # =========== 1 ======================
+    print("Анализ четырех функций по их параметрам")
+    param_range = np.linspace(2, 30, 100)
+    Analyze_of_parametrs(param_range, n, input_k, 'max_degree', 'stud')
+    Analyze_of_parametrs(param_range, n, input_k, 'max_degree', 'lap')
 
-  param_range = np.linspace(2, 30, 100)
-  Analyze_of_parametrs(param_range, n, input_d, 'size_max_independent_set', 'stud')
-  Analyze_of_parametrs(param_range, n, input_d, 'size_max_independent_set', 'lap')
+    param_range = np.linspace(2, 30, 100)
+    Analyze_of_parametrs(param_range, n, input_d, 'size_max_independent_set', 'stud')
+    Analyze_of_parametrs(param_range, n, input_d, 'size_max_independent_set', 'lap')
 
-  param_range = np.linspace(0.5, 10, 70)
-  Analyze_of_parametrs(param_range, n, input_k, 'number_of_connectivity_components', 'weib')
-  Analyze_of_parametrs(param_range, n, input_k, 'number_of_connectivity_components', 'exp')
+    param_range = np.linspace(0.5, 10, 70)
+    Analyze_of_parametrs(param_range, n, input_k, 'number_of_connectivity_components', 'weib')
+    Analyze_of_parametrs(param_range, n, input_k, 'number_of_connectivity_components', 'exp')
 
-  param_range = np.linspace(0.5, 10, 60)
-  Analyze_of_parametrs(param_range, n, input_d, 'size_max_clique', 'weib')
-  Analyze_of_parametrs(param_range, n, input_d, 'size_max_clique', 'exp')
+    param_range = np.linspace(0.5, 10, 60)
+    Analyze_of_parametrs(param_range, n, input_d, 'size_max_clique', 'weib')
+    Analyze_of_parametrs(param_range, n, input_d, 'size_max_clique', 'exp')
 
-  # =========== 2 ======================
-  print("Анализ четырех функций по k, d и n")
-  print("1) max_degree")
-  n_range = range(50, 400, 10)
-  k_range = range(2, 20)
-  Analyze_for_k_and_d(par_1, n, k_range, 'stud', 'max_degree')
-  Analyze_for_k_and_d(par_2, n, k_range, 'lap', 'max_degree')
-  Analyze_of_n(par_1, 'stud', n_range, input_k, 'max_degree')
-  Analyze_of_n(par_2, 'lap', n_range, input_k, 'max_degree')
+    # =========== 2 ======================
+    print("Анализ четырех функций по k, d и n")
+    print("1) max_degree")
+    n_range = range(50, 400, 10)
+    k_range = range(2, 20)
+    Analyze_for_k_and_d(par_1, n, k_range, 'stud', 'max_degree')
+    Analyze_for_k_and_d(par_2, n, k_range, 'lap', 'max_degree')
+    Analyze_of_n(par_1, 'stud', n_range, input_k, 'max_degree')
+    Analyze_of_n(par_2, 'lap', n_range, input_k, 'max_degree')
 
-  print("2) size_max_independent_set")
-  d_range = np.linspace(0.05, 10, 30)
-  Analyze_for_k_and_d(par_2, n, d_range, 'lap', 'size_max_independent_set')
-  Analyze_for_k_and_d(par_1, n, d_range, 'stud', 'size_max_independent_set')
-  Analyze_of_n(par_2, 'lap', n_range, input_d, 'size_max_independent_set')
-  Analyze_of_n(par_2, 'stud', n_range, input_d, 'size_max_independent_set')
+    print("2) size_max_independent_set")
+    d_range = np.linspace(0.05, 10, 30)
+    Analyze_for_k_and_d(par_2, n, d_range, 'lap', 'size_max_independent_set')
+    Analyze_for_k_and_d(par_1, n, d_range, 'stud', 'size_max_independent_set')
+    Analyze_of_n(par_2, 'lap', n_range, input_d, 'size_max_independent_set')
+    Analyze_of_n(par_2, 'stud', n_range, input_d, 'size_max_independent_set')
 
-  print("3) number_of_connectivity_components")
-  n_range = range(50, 100, 2)
-  k_range = range(2, 20)
-  Analyze_for_k_and_d(par_3, n, k_range, 'exp', 'number_of_connectivity_components')
-  Analyze_for_k_and_d(par_4, n, k_range, 'weib', 'number_of_connectivity_components')
-  Analyze_of_n(par_3, 'exp', n_range, input_k, 'number_of_connectivity_components')
-  Analyze_of_n(par_4, 'weib', n_range, input_k, 'number_of_connectivity_components')
+    print("3) number_of_connectivity_components")
+    n_range = range(50, 100, 2)
+    k_range = range(2, 20)
+    Analyze_for_k_and_d(par_3, n, k_range, 'exp', 'number_of_connectivity_components')
+    Analyze_for_k_and_d(par_4, n, k_range, 'weib', 'number_of_connectivity_components')
+    Analyze_of_n(par_3, 'exp', n_range, input_k, 'number_of_connectivity_components')
+    Analyze_of_n(par_4, 'weib', n_range, input_k, 'number_of_connectivity_components')
 
-  print("4) size_max_clique")
-  d_range = np.linspace(0.05, 10, 30)
-  Analyze_for_k_and_d(par_3, n, d_range, 'exp', 'size_max_clique')
-  Analyze_for_k_and_d(par_4, n, d_range, 'weib', 'size_max_clique')
-  Analyze_of_n(par_3, 'exp', n_range, input_d, 'size_max_clique')
-  Analyze_of_n(par_4, 'weib', n_range, input_d, 'size_max_clique')
+    print("4) size_max_clique")
+    d_range = np.linspace(0.05, 10, 30)
+    Analyze_for_k_and_d(par_3, n, d_range, 'exp', 'size_max_clique')
+    Analyze_for_k_and_d(par_4, n, d_range, 'weib', 'size_max_clique')
+    Analyze_of_n(par_3, 'exp', n_range, input_d, 'size_max_clique')
+    Analyze_of_n(par_4, 'weib', n_range, input_d, 'size_max_clique')
 
-  # =========== 3 ======================
-  print("Построение множества А")
+    # =========== 3 ======================
+    print("Построение множества А1 и А2")
 
-  # ============= Часть 2 =================
+    n = 300
+    k = 5
+    d = 0.2
+    iterations = 1000
 
-  # =========== 1 ======================
-  print("Исследование важности характеристик")
-    
+    A1_knn = find_A_1(n, 'knn', k, iterations)
+    A1_dist = find_A_1(n, 'dist', d, iterations)
+    A2_knn = find_A_2(n, 'knn', k, iterations)
+    A2_dist = find_A_2(n, 'dist', d, iterations)
 
-  clf_knn, df_knn = build_classifier(n, input_k, 'stud', 'lap')   
-  clf_dist, df_dist = build_classifier(n, input_d, 'weib', 'exp')
-    
-  print("\nАнализ важности признаков в зависимости от размера выборки:")
-  n_range = range(20, 51, 5)
-  analyze_feature_importance_vs_n(n_range, input_k, 'stud', 'lap')
-  analyze_feature_importance_vs_n(n_range, input_k, 'weib', 'exp')
+    # ============= Часть 2 =================
 
-  # =========== 2 ======================
+    # =========== 1 ======================
+    print("Исследование важности характеристик")
 
-  # =========== 3 ======================
+
+    clf_knn, df_knn = build_classifier(n, input_k, 'stud', 'lap')
+    clf_dist, df_dist = build_classifier(n, input_d, 'weib', 'exp')
+
+    print("\nАнализ важности признаков в зависимости от размера выборки:")
+    n_range = range(20, 51, 5)
+    analyze_feature_importance_vs_n(n_range, input_k, 'stud', 'lap')
+    analyze_feature_importance_vs_n(n_range, input_k, 'weib', 'exp')
+
+    # =========== 2 ======================
+
+    # =========== 3 ======================
