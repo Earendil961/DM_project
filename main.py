@@ -78,58 +78,55 @@ def size_max_clique(adj_matrix):
     return max_clique
 
 def number_of_connectivity_components(data):
-    n = len(data)
-    if n == 0:
-        return 0
-    reach = [row.copy() for row in data]
-    for i in range(n):
-        reach[i][i] = 1
-    for k in range(n):
+        n = len(data)
+        visited = [False] * n
+        count = 0
+
+        def dfs(i):
+            visited[i] = True
+            for j in range(n):
+                if data[i][j] == 1 and not visited[j]:
+                    dfs(j)
         for i in range(n):
-            for j in range(n):
-                reach[i][j] = reach[i][j] or (reach[i][k] and reach[k][j])
-    visited = [False] * n
-    count = 0
-    for i in range(n):
-        if not visited[i]:
-            count += 1
-            for j in range(n):
-                if reach[i][j] and reach[j][i]:
-                    visited[j] = True
-    return count
+            if not visited[i]:
+                count += 1
+                dfs(i)
+        return count
 
 
-def Analyze_of_parametrs(param_range, n, input_k_or_d, type_analyze, type_func):
+def Analyze_of_parametrs(param_range, n, input_k_or_d, type_analyze, type_func, iterations=10):
     t_values = []
     t_val = -1
     samples = []
     for param in param_range:
-        if type_func == 'stud':
-            samples = np.random.standard_t(df=param, size=n)
-            samples.sort()
-        elif type_func == 'lap':
-            samples = np.random.laplace(loc=0, scale=param, size=n)
-            samples.sort()
-        elif type_func == 'weib':
-            samples = np.random.weibull(a=1/2, size=n) * param
-            samples.sort()
-        elif type_func == 'exp':
-            samples = np.random.exponential(scale=1/param, size=n)
-            samples.sort()
-        if type_analyze == 'max_degree':
-            graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
-            t_val = max_degree(n, graph)
-        elif type_analyze == 'size_max_independent_set':
-            graph = create_gd(samples, n, input_k_or_d)
-            t_val = size_max_independent_set(n, graph)
-        elif type_analyze == 'number_of_connectivity_components':
-            graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
-            t_val = number_of_connectivity_components(graph)
-        elif type_analyze == 'size_max_clique':
-            graph = create_gd(samples, n, input_k_or_d)
-            t_val = size_max_clique(graph)
-        t_values.append(t_val)
-
+        sum_val = 0
+        for i in range(iterations):
+            if type_func == 'stud':
+                samples = np.random.standard_t(df=param, size=n)
+                samples.sort()
+            elif type_func == 'lap':
+                samples = np.random.laplace(loc=0, scale=param, size=n)
+                samples.sort()
+            elif type_func == 'weib':
+                samples = np.random.weibull(a=1/2, size=n) * param
+                samples.sort()
+            elif type_func == 'exp':
+                samples = np.random.exponential(scale=1/param, size=n)
+                samples.sort()
+            if type_analyze == 'max_degree':
+                graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
+                t_val = max_degree(n, graph)
+            elif type_analyze == 'size_max_independent_set':
+                graph = create_gd(samples, n, input_k_or_d)
+                t_val = size_max_independent_set(n, graph)
+            elif type_analyze == 'number_of_connectivity_components':
+                graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
+                t_val = number_of_connectivity_components(graph)
+            elif type_analyze == 'size_max_clique':
+                graph = create_gd(samples, n, input_k_or_d)
+                t_val = size_max_clique(graph)
+            sum_val += t_val
+        t_values.append(sum_val / iterations)
     plt.figure()
     plt.plot(param_range, t_values)
     plt.xlabel('Parameter value, ' + type_func)
@@ -138,78 +135,85 @@ def Analyze_of_parametrs(param_range, n, input_k_or_d, type_analyze, type_func):
     plt.show()
 
 
-def Analyze_for_k_and_d(par_1_or_2, n, input_k_or_d_mas, type_func, type_analyze):
-    t_values = []
+def Analyze_for_k_and_d(par_1_or_2, n, input_k_or_d_mas, type_func, type_analyze, iterations=10):
+    t_values = [0] * len(input_k_or_d_mas)
     t_val = -1
     samples = []
-    if type_func == 'stud':
-      samples = np.random.standard_t(df=par_1_or_2, size=n)
-      samples.sort()
-    elif type_func == 'lap':
-      samples = np.random.laplace(loc=0, scale=par_1_or_2, size=n)
-      samples.sort()
-    elif type_func == 'weib':
-      samples = np.random.weibull(a=1/2, size=n) * par_1_or_2
-      samples.sort()
-    elif type_func == 'exp':
-      samples = np.random.exponential(scale=1/par_1_or_2, size=n)
-      samples.sort()
-    for input_k_or_d in input_k_or_d_mas:
-        if type_analyze == 'max_degree':
-            graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
-            t_val = max_degree(n, graph)
-        elif type_analyze == 'size_max_independent_set':
-            graph = create_gd(samples, n, input_k_or_d)
-            t_val = size_max_independent_set(n, graph)
-        elif type_analyze == 'number_of_connectivity_components':
-            graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
-            t_val = number_of_connectivity_components(graph)
-        elif type_analyze == 'size_max_clique':
-            graph = create_gd(samples, n, input_k_or_d)
-            t_val = size_max_clique(graph)
-        t_values.append(t_val)
-
+    for i in range(iterations):
+        if type_func == 'stud':
+          samples = np.random.standard_t(df=par_1_or_2, size=n)
+          samples.sort()
+        elif type_func == 'lap':
+          samples = np.random.laplace(loc=0, scale=par_1_or_2, size=n)
+          samples.sort()
+        elif type_func == 'weib':
+          samples = np.random.weibull(a=1/2, size=n) * par_1_or_2
+          samples.sort()
+        elif type_func == 'exp':
+          samples = np.random.exponential(scale=1/par_1_or_2, size=n)
+          samples.sort()
+        counter = 0
+        for input_k_or_d in input_k_or_d_mas:
+            if type_analyze == 'max_degree':
+                graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
+                t_val = max_degree(n, graph)
+            elif type_analyze == 'size_max_independent_set':
+                graph = create_gd(samples, n, input_k_or_d)
+                t_val = size_max_independent_set(n, graph)
+            elif type_analyze == 'number_of_connectivity_components':
+                graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
+                t_val = number_of_connectivity_components(graph)
+            elif type_analyze == 'size_max_clique':
+                graph = create_gd(samples, n, input_k_or_d)
+                t_val = size_max_clique(graph)
+            t_values[counter] += t_val
+            counter += 1
+    for i in range(len(t_values)):
+        t_values[i] /= iterations
     plt.figure()
     plt.plot(input_k_or_d_mas, t_values)
     plt.ylabel(f'Parameter {type_analyze} value')
-    if(type_analyze == 'max_degree' and type_analyze == 'number_of_connectivity_components'):
+    if(type_analyze == 'max_degree' or type_analyze == 'number_of_connectivity_components'):
       plt.xlabel(f'Parameter k value,'+ type_func)
     else:
       plt.xlabel(f'Parameter dist value,'+ type_func)
     plt.grid()
     plt.show()
 
-def Analyze_of_n(par_1_or_2, type_func, n_range, input_k_or_d1, type_analyze):
+def Analyze_of_n(par_1_or_2, type_func, n_range, input_k_or_d1, type_analyze, iterations=10):
     t_values = []
     t_val = -1
     samples = []
     for n in n_range:
-        if type_func == 'stud':
-            samples = np.random.standard_t(df=par_1_or_2, size=n)
-            samples.sort()
-        elif type_func == 'lap':
-            samples = np.random.laplace(loc=0, scale=par_1_or_2, size=n)
-            samples.sort()
-        elif type_func == 'weib':
-            samples = np.random.weibull(a=1/2, size=n) * par_1_or_2
-            samples.sort()
-        elif type_func == 'exp':
-            samples = np.random.exponential(scale=1/par_1_or_2, size=n)
-            samples.sort()
-        if type_analyze == 'max_degree':
-            graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d1)
-            t_val = max_degree(n, graph)
-        elif type_analyze == 'size_max_independent_set':
-            graph = create_gd(samples, n, input_k_or_d1)
-            t_val = size_max_independent_set(n, graph)
-        elif type_analyze == 'number_of_connectivity_components':
-            graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d1)
-            t_val = number_of_connectivity_components(graph)
-        elif type_analyze == 'size_max_clique':
-            graph = create_gd(samples, n, input_k_or_d1)
-            t_val = size_max_clique(graph)
-        t_values.append(t_val)
-
+        sum_val = 0
+        for i in range(iterations):
+            if type_func == 'stud':
+                samples = np.random.standard_t(df=par_1_or_2, size=n)
+                samples.sort()
+            elif type_func == 'lap':
+                samples = np.random.laplace(loc=0, scale=par_1_or_2, size=n)
+                samples.sort()
+            elif type_func == 'weib':
+                samples = np.random.weibull(a=1/2, size=n) * par_1_or_2
+                samples.sort()
+            elif type_func == 'exp':
+                samples = np.random.exponential(scale=1/par_1_or_2, size=n)
+                samples.sort()
+            if type_analyze == 'max_degree':
+                graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d1)
+                t_val = max_degree(n, graph)
+            elif type_analyze == 'size_max_independent_set':
+                graph = create_gd(samples, n, input_k_or_d1)
+                t_val = size_max_independent_set(n, graph)
+            elif type_analyze == 'number_of_connectivity_components':
+                graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d1)
+                t_val = number_of_connectivity_components(graph)
+            elif type_analyze == 'size_max_clique':
+                graph = create_gd(samples, n, input_k_or_d1)
+                t_val = size_max_clique(graph)
+            sum_val += t_val
+        sum_val /= iterations
+        t_values.append(sum_val)
     plt.figure()
     plt.plot(n_range, t_values)
     plt.ylabel(f'Parameter {type_analyze} value')
