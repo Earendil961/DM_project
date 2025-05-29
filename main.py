@@ -484,7 +484,69 @@ def test_classifier_2(classifier, dist, n=50):
     print('Мощность: ', true_true / 2 * n)
     print('Точность: ', (true_true + false_false) / 2 * n)
     return [true_false / 2 * n, true_true / 2 * n, (true_true + false_false) / 2 * n]
+    
+def Analyze_of_metric(n_values, k_or_d, dist1, dist2, iterations=50):
+    results = []    
+    for n in n_values:
+        X = []
+        y = []
+        for i in range(iterations):
+            if dist1 == 'stud':
+                samples1 = np.random.standard_t(df=3, size=n)
+            elif dist1 == 'lap':
+                samples1 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
+            elif dist1 == 'weib':
+                samples1 = np.random.weibull(a=1/2, size=n) * 0.31622776601
+            elif dist1 == 'exp':
+                samples1 = np.random.exponential(scale=1, size=n)
+            
+            features1 = extract_multiple_features(samples1, n, k_or_d, dist1)
+            X.append(features1)
+            y.append(0) 
 
+            if dist2 == 'stud':
+                samples2 = np.random.standard_t(df=3, size=n)
+            elif dist2 == 'lap':
+                samples2 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
+            elif dist2 == 'weib':
+                samples2 = np.random.weibull(a=1/2, size=n) * 0.31622776601
+            elif dist2 == 'exp':
+                samples2 = np.random.exponential(scale=1, size=n)
+            features2 = extract_multiple_features(samples2, n, k_or_d, dist1)
+            X.append(features2)
+            y.append(1)  
+
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+        
+        classifiers = {
+            'Дерево': RandomForestClassifier(n_estimators=100, random_state=42),
+            'Логистическая регрессия': LogisticRegression(max_iter=1000, random_state=42),
+            'K-ближайших соседей': KNeighborsClassifier(n_neighbors=5)
+        }
+        
+        n_metrics = []
+        for name, clf in classifiers.items():
+            clf.fit(X_train, y_train)
+            y_pred = clf.predict(X_test)
+            y_prob = clf.predict_proba(X_test)[:, 1]            
+            acc = accuracy_score(y_test, y_pred)
+            report = classification_report(y_test, y_pred, output_dict=True)            
+            n_metrics.append({
+                'Классификатор': name,
+                'Точность': acc,
+                'Precision': report['1']['precision'],
+                'Recall': report['1']['recall'],
+                'F1-score': report['1']['f1-score']
+            })    
+        results.append({
+            'n': n,
+            'Метрики': pd.DataFrame(n_metrics)
+        })
+
+    print("\nРезультаты анализа метрик для различных n:")
+    for result in results:
+      print(f"\nРазмер выборки n = {result['n']}") 
+      print(result['Метрики'])
 #==========================================================================================================
 
 if __name__ == "__main__":
@@ -579,5 +641,6 @@ if __name__ == "__main__":
     analyze_feature_importance_vs_n(n_range, input_d, 'weib', 'exp')
 
     # =========== 2 ======================
-
+    n_values = [25, 100, 500]
+    Analyze_of_metric(n_values, input_d, 'stud', 'lap')
     # =========== 3 ======================
