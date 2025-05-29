@@ -248,13 +248,13 @@ def find_A_1(n, graph_type, input_k_or_d1, iterations):
     power = 0
     a = []
     alpha = 1 - 0.05 ** 5
-    while values1:
+    while values2:
         current_power = 1000
         current_error = 1000
         current_a = None
-        for key in values1:
+        for key in values2:
             if values1[key] < current_power:
-                current_power = values1[key]
+                current_power = values1.get(key, 0)
                 current_error = values2.get(key, 0)
                 current_a = key
         if current_a is None:
@@ -300,7 +300,7 @@ def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
         current_power = 1000
         current_error = 1000
         current_a = None
-        for key in values1:
+        for key in values2:
             if values1[key] < current_power:
                 current_power = values1[key]
                 current_error = values2.get(key, 0)
@@ -399,7 +399,7 @@ def analyze_feature_importance_vs_n(n_range, k_or_d, dist1, dist2):
     plt.grid()
     plt.show()
 
-def test_classifier_1(classifier, dist, n=50):
+def t_classifier_1(classifier, dist, n=50):
     targets = [1] * n + [0] * n
     true_true = 0
     true_false = 0
@@ -442,7 +442,7 @@ def test_classifier_1(classifier, dist, n=50):
     print('Точность: ', (true_true + false_false) / 2 * n)
     return [true_false / 2 * n, true_true / 2 * n, (true_true + false_false) / 2 * n]
 
-def test_classifier_2(classifier, dist, n=50):
+def t_classifier_2(classifier, dist, n=50):
     targets = [1] * n + [0] * n
     true_true = 0
     true_false = 0
