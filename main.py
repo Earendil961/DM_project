@@ -409,7 +409,6 @@ if __name__ == "__main__":
   n = 100
 
   # =========== 1 ======================
-  '''
   print("Анализ четырех функций по их параметрам")
   param_range = np.linspace(2, 30, 100)
   Analyze_of_parametrs(param_range, n, input_k, 'max_degree', 'stud')
@@ -458,7 +457,7 @@ if __name__ == "__main__":
   Analyze_for_k_and_d(par_4, n, d_range, 'weib', 'size_max_clique')
   Analyze_of_n(par_3, 'exp', n_range, input_d, 'size_max_clique')
   Analyze_of_n(par_4, 'weib', n_range, input_d, 'size_max_clique')
-  '''
+
   # =========== 3 ======================
   print("Построение множества А")
 
@@ -467,13 +466,15 @@ if __name__ == "__main__":
   # =========== 1 ======================
   print("Исследование важности характеристик")
     
-  print("\nСравнение t-распределения Стьюдента и Лапласа:")
-  clf_knn, df_knn = build_classifier(n, input_k, 'stud', 'lap')
-    
-  print("\nСравнение распределений Вейбулла и экспоненциального:")
+
+  clf_knn, df_knn = build_classifier(n, input_k, 'stud', 'lap')   
   clf_dist, df_dist = build_classifier(n, input_d, 'weib', 'exp')
     
   print("\nАнализ важности признаков в зависимости от размера выборки:")
   n_range = range(20, 51, 5)
   analyze_feature_importance_vs_n(n_range, input_k, 'stud', 'lap')
   analyze_feature_importance_vs_n(n_range, input_k, 'weib', 'exp')
+
+  # =========== 2 ======================
+
+  # =========== 3 ======================
