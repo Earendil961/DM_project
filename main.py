@@ -213,13 +213,14 @@ def Analyze_of_n(par_1_or_2, type_func, n_range, input_k_or_d1, type_analyze):
     plt.grid()
     plt.show()
 
-def find_A_1(n, graph_tipe, input_k_or_d1, iterations):
+
+def find_A_1(n, graph_type, input_k_or_d1, iterations):
     values1 = {}
     values2 = {}
     for i in range(iterations):
         samples1 = np.random.standard_t(df=3, size=n)
         samples2 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
-        if graph_tipe == 'knn':
+        if graph_type == 'knn':
             graph1 = create_gk(samples1.reshape(-1, 1), n, input_k_or_d1)
             graph2 = create_gk(samples2.reshape(-1, 1), n, input_k_or_d1)
             t_val_1 = max_degree(n, graph1)
@@ -230,30 +231,32 @@ def find_A_1(n, graph_tipe, input_k_or_d1, iterations):
             t_val_1 = size_max_independent_set(n, graph1)
             t_val_2 = size_max_independent_set(n, graph2)
         values1[t_val_1] = values1.get(t_val_1, 0) + 1
-        values2[t_val_2] = values1.get(t_val_2, 0) + 1
-    for i in values1.values():
-        values1[i] /= iterations
-    for i in values2.values():
-        values2[i] /= iterations
+        values2[t_val_2] = values2.get(t_val_2, 0) + 1
+    for key in list(values1.keys()):
+        values1[key] /= iterations
+    for key in list(values2.keys()):
+        values2[key] /= iterations
     error = 0
     power = 0
     a = []
-    while True:
-        current_error = 1000
+    alpha = 1 - 0.05 ** 5
+    while values1:
         current_power = 1000
-        current_a = -1
-        alpha = 1 - 0.05**5
-        for i in values1.keys():
-            if values1.get(i, 0) <= current_power:
-                current_power = values1.get(i, 0)
-                current_error = values2.get(i, 0)
-                current_a = i
+        current_error = 1000
+        current_a = None
+        for key in values1:
+            if values1[key] < current_power:
+                current_power = values1[key]
+                current_error = values2.get(key, 0)
+                current_a = key
+        if current_a is None:
+            break
         a.append(current_a)
         power += current_power
         error += current_error
-        values1.pop(current_a)
-        values2.pop(current_a)
-        if current_error >= alpha:
+        values1.pop(current_a, None)
+        values2.pop(current_a, None)
+        if not values1 or current_error >= alpha:
             break
     return a
 
@@ -274,30 +277,32 @@ def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
             t_val_1 = size_max_clique(graph1)
             t_val_2 = size_max_clique(graph2)
         values1[t_val_1] = values1.get(t_val_1, 0) + 1
-        values2[t_val_2] = values1.get(t_val_2, 0) + 1
-    for i in values1.values():
-        values1[i] /= iterations
-    for i in values2.values():
-        values2[i] /= iterations
+        values2[t_val_2] = values2.get(t_val_2, 0) + 1
+    for key in list(values1.keys()):
+        values1[key] /= iterations
+    for key in list(values2.keys()):
+        values2[key] /= iterations
     error = 0
     power = 0
     a = []
-    while True:
-        current_error = 1000
+    alpha = 1 - 0.05 ** 5
+    while values1:
         current_power = 1000
-        current_a = -1
-        alpha = 1 - 0.05**5
-        for i in values1.keys():
-            if values1.get(i, 0) <= current_power:
-                current_power = values1.get(i, 0)
-                current_error = values2.get(i, 0)
-                current_a = i
+        current_error = 1000
+        current_a = None
+        for key in values1:
+            if values1[key] < current_power:
+                current_power = values1[key]
+                current_error = values2.get(key, 0)
+                current_a = key
+        if current_a is None:
+            break
         a.append(current_a)
         power += current_power
         error += current_error
-        values1.pop(current_a)
-        values2.pop(current_a)
-        if current_error >= alpha:
+        values1.pop(current_a, None)
+        values2.pop(current_a, None)
+        if not values1 or current_error >= alpha:
             break
     return a
 
