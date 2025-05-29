@@ -262,7 +262,7 @@ def find_A_1(n, graph_type, input_k_or_d1, iterations):
         values2.pop(current_a, None)
         if not values1 or current_error >= alpha:
             break
-    return a
+    return a, power, error
 
 def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
     values1 = {}
@@ -308,7 +308,7 @@ def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
         values2.pop(current_a, None)
         if not values1 or current_error >= alpha:
             break
-    return a
+    return a, power, error
 
 #==========================================================================================================
 def extract_multiple_features(samples, n, k_or_d, graph_type):
