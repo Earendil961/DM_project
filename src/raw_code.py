@@ -102,76 +102,80 @@ def number_of_connectivity_components(data):
     return count
 
 
-def analyze_of_params(param_range, n, input_k_or_d, type_analyze, type_func, iterations=10):
+def analyze_of_params(
+    param_range, n, input_k_or_d, type_analyze, type_func, iterations=10
+):
     t_values = []
     t_val = -1
     samples = []
     for param in param_range:
         sum_val = 0
         for i in range(iterations):
-            if type_func == 'stud':
+            if type_func == "stud":
                 samples = np.random.standard_t(df=param, size=n)
                 samples.sort()
-            elif type_func == 'lap':
+            elif type_func == "lap":
                 samples = np.random.laplace(loc=0, scale=param, size=n)
                 samples.sort()
-            elif type_func == 'weib':
+            elif type_func == "weib":
                 samples = np.random.weibull(a=1 / 2, size=n) * param
                 samples.sort()
-            elif type_func == 'exp':
+            elif type_func == "exp":
                 samples = np.random.exponential(scale=1 / param, size=n)
                 samples.sort()
-            if type_analyze == 'max_degree':
+            if type_analyze == "max_degree":
                 graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
                 t_val = max_degree(n, graph)
-            elif type_analyze == 'size_max_independent_set':
+            elif type_analyze == "size_max_independent_set":
                 graph = create_gd(samples, n, input_k_or_d)
                 t_val = size_max_independent_set(n, graph)
-            elif type_analyze == 'number_of_connectivity_components':
+            elif type_analyze == "number_of_connectivity_components":
                 graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
                 t_val = number_of_connectivity_components(graph)
-            elif type_analyze == 'size_max_clique':
+            elif type_analyze == "size_max_clique":
                 graph = create_gd(samples, n, input_k_or_d)
                 t_val = size_max_clique(graph)
             sum_val += t_val
         t_values.append(sum_val / iterations)
     plt.figure()
     plt.plot(param_range, t_values)
-    plt.xlabel('Parameter value, ' + type_func)
-    plt.ylabel(f'Parameter {type_analyze} value')
+    plt.xlabel("Parameter value, " + type_func)
+    plt.ylabel(f"Parameter {type_analyze} value")
     plt.grid()
     plt.show()
 
 
-def analyze_for_k_and_d(par_1_or_2, n, input_k_or_d_mas, type_func, type_analyze, iterations=10):
+def analyze_for_k_and_d(
+    par_1_or_2, n, input_k_or_d_mas, type_func, type_analyze, iterations=10
+):
     t_values = [0] * len(input_k_or_d_mas)
     t_val = -1
     samples = []
     for i in range(iterations):
-        if type_func == 'stud':
+        if type_func == "stud":
             samples = np.random.standard_t(df=par_1_or_2, size=n)
             samples.sort()
-        elif type_func == 'lap':
+        elif type_func == "lap":
             samples = np.random.laplace(loc=0, scale=par_1_or_2, size=n)
             samples.sort()
-        elif type_func == 'weib':
+        elif type_func == "weib":
             samples = np.random.weibull(a=1 / 2, size=n) * par_1_or_2
             samples.sort()
-        elif type_func == 'exp':
+        elif type_func == "exp":
             samples = np.random.exponential(scale=1 / par_1_or_2, size=n)
             samples.sort()
         counter = 0
         for input_k_or_d in input_k_or_d_mas:
-            if type_analyze == 'max_degree':
+            if type_analyze == "max_degree":
                 graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
                 t_val = max_degree(n, graph)
-            elif type_analyze == 'size_max_independent_set':
+            elif type_analyze == "size_max_independent_set":
                 graph = create_gd(samples, n, input_k_or_d)
                 t_val = size_max_independent_set(n, graph)
-            elif type_analyze == 'number_of_connectivity_components':
+            elif type_analyze == "number_of_connectivity_components":
                 graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d)
                 t_val = number_of_connectivity_components(graph)
-            elif type_analyze == 'size_max_clique':
+            elif type_analyze == "size_max_clique":
                 graph = create_gd(samples, n, input_k_or_d)
                 t_val = size_max_clique(graph)
             t_values[counter] += t_val
@@ -180,44 +184,49 @@ def analyze_for_k_and_d(par_1_or_2, n, input_k_or_d_mas, type_func, type_analyze
         t_values[i] /= iterations
     plt.figure()
     plt.plot(input_k_or_d_mas, t_values)
-    plt.ylabel(f'Parameter {type_analyze} value')
-    if (type_analyze == 'max_degree' or type_analyze == 'number_of_connectivity_components'):
-        plt.xlabel(f'Parameter k value,' + type_func)
+    plt.ylabel(f"Parameter {type_analyze} value")
+    if (
+        type_analyze == "max_degree"
+        or type_analyze == "number_of_connectivity_components"
+    ):
+        plt.xlabel(f"Parameter k value," + type_func)
     else:
-        plt.xlabel(f'Parameter dist value,' + type_func)
+        plt.xlabel(f"Parameter dist value," + type_func)
     plt.grid()
     plt.show()
 
 
-def Analyze_of_n(par_1_or_2, type_func, n_range, input_k_or_d1, type_analyze, iterations=10):
+def Analyze_of_n(
+    par_1_or_2, type_func, n_range, input_k_or_d1, type_analyze, iterations=10
+):
     t_values = []
     t_val = -1
     samples = []
     for n in n_range:
         sum_val = 0
         for i in range(iterations):
-            if type_func == 'stud':
+            if type_func == "stud":
                 samples = np.random.standard_t(df=par_1_or_2, size=n)
                 samples.sort()
-            elif type_func == 'lap':
+            elif type_func == "lap":
                 samples = np.random.laplace(loc=0, scale=par_1_or_2, size=n)
                 samples.sort()
-            elif type_func == 'weib':
+            elif type_func == "weib":
                 samples = np.random.weibull(a=1 / 2, size=n) * par_1_or_2
                 samples.sort()
-            elif type_func == 'exp':
+            elif type_func == "exp":
                 samples = np.random.exponential(scale=1 / par_1_or_2, size=n)
                 samples.sort()
-            if type_analyze == 'max_degree':
+            if type_analyze == "max_degree":
                 graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d1)
                 t_val = max_degree(n, graph)
-            elif type_analyze == 'size_max_independent_set':
+            elif type_analyze == "size_max_independent_set":
                 graph = create_gd(samples, n, input_k_or_d1)
                 t_val = size_max_independent_set(n, graph)
-            elif type_analyze == 'number_of_connectivity_components':
+            elif type_analyze == "number_of_connectivity_components":
                 graph = create_gk(samples.reshape(-1, 1), n, input_k_or_d1)
                 t_val = number_of_connectivity_components(graph)
-            elif type_analyze == 'size_max_clique':
+            elif type_analyze == "size_max_clique":
                 graph = create_gd(samples, n, input_k_or_d1)
                 t_val = size_max_clique(graph)
             sum_val += t_val
@@ -225,8 +234,8 @@ def Analyze_of_n(par_1_or_2, type_func, n_range, input_k_or_d1, type_analyze, it
         t_values.append(sum_val)
     plt.figure()
     plt.plot(n_range, t_values)
-    plt.ylabel(f'Parameter {type_analyze} value')
-    plt.xlabel(f'Sample size n value, ' + type_func)
+    plt.ylabel(f"Parameter {type_analyze} value")
+    plt.xlabel(f"Sample size n value, " + type_func)
     plt.grid()
     plt.show()
 
@@ -237,7 +246,7 @@ def find_A_1(n, graph_type, input_k_or_d1, iterations):
     for i in range(iterations):
         samples1 = np.random.standard_t(df=3, size=n)
         samples2 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
-        if graph_type == 'knn':
+        if graph_type == "knn":
             graph1 = create_gk(samples1.reshape(-1, 1), n, input_k_or_d1)
             graph2 = create_gk(samples2.reshape(-1, 1), n, input_k_or_d1)
             t_val_1 = max_degree(n, graph1)
@@ -256,7 +265,7 @@ def find_A_1(n, graph_type, input_k_or_d1, iterations):
     error = 0
     power = 0
     a = []
-    alpha = 1 - 0.05 ** 5
+    alpha = 1 - 0.05**5
     while values2:
         current_power = 1000
         current_error = 1000
@@ -275,8 +284,8 @@ def find_A_1(n, graph_type, input_k_or_d1, iterations):
         values2.pop(current_a, None)
         if not values2 or error >= alpha:
             break
-    print('power A1 = ', power)
-    print('error A1 = ', error)
+    print("power A1 = ", power)
+    print("error A1 = ", error)
     return a
 
 
@@ -286,7 +295,7 @@ def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
     for i in range(iterations):
         samples1 = np.random.weibull(a=1 / 2, size=n) * 0.31622776601
         samples2 = np.random.exponential(scale=1, size=n)
-        if graph_tipe == 'knn':
+        if graph_tipe == "knn":
             graph1 = create_gk(samples1.reshape(-1, 1), n, input_k_or_d1)
             graph2 = create_gk(samples2.reshape(-1, 1), n, input_k_or_d1)
             t_val_1 = number_of_connectivity_components(graph1)
@@ -305,7 +314,7 @@ def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
     error = 0
     power = 0
     a = []
-    alpha = 1 - 0.05 ** 5
+    alpha = 1 - 0.05**5
     while values1:
         current_power = 1000
         current_error = 1000
@@ -324,15 +333,15 @@ def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
         values2.pop(current_a, None)
         if not values2 or error >= alpha:
             break
-    print('power A2 = ', power)
-    print('error A2 = ', error)
+    print("power A2 = ", power)
+    print("error A2 = ", error)
     return a
 
 
 # ==========================================================================================================
 def extract_multiple_features(samples, n, k_or_d, graph_type):
     features = []
-    if graph_type == 'stud':
+    if graph_type == "stud":
         graph = create_gd(samples, n, k_or_d)
         features.append(max_degree(n, graph))
         features.append(size_max_independent_set(n, graph))
@@ -348,45 +357,47 @@ def build_classifier(n, k_or_d, dist1, dist2, type1, iterations=50):
     y = []
 
     for i in range(iterations):
-        if dist1 == 'stud':
+        if dist1 == "stud":
             samples1 = np.random.standard_t(df=3, size=n)
-        elif dist1 == 'lap':
+        elif dist1 == "lap":
             samples1 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
-        elif dist1 == 'weib':
+        elif dist1 == "weib":
             samples1 = np.random.weibull(a=1 / 2, size=n) * 0.31622776601
-        elif dist1 == 'exp':
+        elif dist1 == "exp":
             samples1 = np.random.exponential(scale=1, size=n)
 
         features1 = extract_multiple_features(samples1, n, k_or_d, dist1)
         X.append(features1)
         y.append(0)
 
-        if dist2 == 'stud':
+        if dist2 == "stud":
             samples2 = np.random.standard_t(df=3, size=n)
-        elif dist2 == 'lap':
+        elif dist2 == "lap":
             samples2 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
-        elif dist2 == 'weib':
+        elif dist2 == "weib":
             samples2 = np.random.weibull(a=1 / 2, size=n) * 0.31622776601
-        elif dist2 == 'exp':
+        elif dist2 == "exp":
             samples2 = np.random.exponential(scale=1, size=n)
 
         features2 = extract_multiple_features(samples2, n, k_or_d, dist1)
         X.append(features2)
         y.append(1)
 
-    if dist1 == 'stud':
-        feature_names = ['max_degree', 'size_max_independent_set']
+    if dist1 == "stud":
+        feature_names = ["max_degree", "size_max_independent_set"]
     else:
-        feature_names = ['number_of_connectivity_components', 'size_max_clique']
+        feature_names = ["number_of_connectivity_components", "size_max_clique"]
     df = pd.DataFrame(X, columns=feature_names)
-    df['target'] = y
+    df["target"] = y
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(
+        X, y, test_size=0.3, random_state=42
+    )
 
     clf = RandomForestClassifier(n_estimators=100, random_state=42)
     clf.fit(X_train, y_train)
 
-    if type1 == 'har_analyse':
+    if type1 == "har_analyse":
         y_pred = clf.predict(X_test)
         for name, importance in zip(feature_names, clf.feature_importances_):
             print(f"{name}: {importance:.4f}")
@@ -397,17 +408,17 @@ def analyze_feature_importance_vs_n(n_range, k_or_d, dist1, dist2):
     importance_results = {}
 
     for n in n_range:
-        clf, df = build_classifier(n, k_or_d, dist1, dist2, 'n_analyse', iterations=50)
+        clf, df = build_classifier(n, k_or_d, dist1, dist2, "n_analyse", iterations=50)
         importance_results[n] = clf.feature_importances_
 
     plt.figure(figsize=(12, 6))
     for feature_idx in range(len(clf.feature_importances_)):
         importances = [importance_results[n][feature_idx] for n in n_range]
-        plt.plot(n_range, importances, label=f'Признак {feature_idx}')
+        plt.plot(n_range, importances, label=f"Признак {feature_idx}")
 
-    plt.xlabel('Размер n')
-    plt.ylabel('Важность признака')
-    plt.title('Зависимость важности от n')
+    plt.xlabel("Размер n")
+    plt.ylabel("Важность признака")
+    plt.title("Зависимость важности от n")
     plt.legend()
     plt.grid()
     plt.show()
@@ -451,9 +462,9 @@ def t_classifier_1(classifier, dist, n=50):
                 false_true += 1
             else:
                 false_false += 1
-    print('Ошибка первого рода: ', true_false / 2 * n)
-    print('Мощность: ', true_true / 2 * n)
-    print('Точность: ', (true_true + false_false) / 2 * n)
+    print("Ошибка первого рода: ", true_false / 2 * n)
+    print("Мощность: ", true_true / 2 * n)
+    print("Точность: ", (true_true + false_false) / 2 * n)
     return [true_false / 2 * n, true_true / 2 * n, (true_true + false_false) / 2 * n]
 
 
@@ -495,9 +506,9 @@ def t_classifier_2(classifier, dist, n=50):
                 false_true += 1
             else:
                 false_false += 1
-    print('Ошибка первого рода: ', true_false / 2 * n)
-    print('Мощность: ', true_true / 2 * n)
-    print('Точность: ', (true_true + false_false) / 2 * n)
+    print("Ошибка первого рода: ", true_false / 2 * n)
+    print("Мощность: ", true_true / 2 * n)
+    print("Точность: ", (true_true + false_false) / 2 * n)
     return [true_false / 2 * n, true_true / 2 * n, (true_true + false_false) / 2 * n]
 
 
@@ -507,37 +518,41 @@ def Analyze_of_metric(n_values, k_or_d, dist1, dist2, iterations=50):
         X = []
         y = []
         for i in range(iterations):
-            if dist1 == 'stud':
+            if dist1 == "stud":
                 samples1 = np.random.standard_t(df=3, size=n)
-            elif dist1 == 'lap':
+            elif dist1 == "lap":
                 samples1 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
-            elif dist1 == 'weib':
+            elif dist1 == "weib":
                 samples1 = np.random.weibull(a=1 / 2, size=n) * 0.31622776601
-            elif dist1 == 'exp':
+            elif dist1 == "exp":
                 samples1 = np.random.exponential(scale=1, size=n)
 
             features1 = extract_multiple_features(samples1, n, k_or_d, dist1)
             X.append(features1)
             y.append(0)
 
-            if dist2 == 'stud':
+            if dist2 == "stud":
                 samples2 = np.random.standard_t(df=3, size=n)
-            elif dist2 == 'lap':
+            elif dist2 == "lap":
                 samples2 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
-            elif dist2 == 'weib':
+            elif dist2 == "weib":
                 samples2 = np.random.weibull(a=1 / 2, size=n) * 0.31622776601
-            elif dist2 == 'exp':
+            elif dist2 == "exp":
                 samples2 = np.random.exponential(scale=1, size=n)
             features2 = extract_multiple_features(samples2, n, k_or_d, dist1)
             X.append(features2)
             y.append(1)
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.3, random_state=42
+        )
 
         classifiers = {
-            'Дерево': RandomForestClassifier(n_estimators=100, random_state=42),
-            'Логистическая регрессия': LogisticRegression(max_iter=1000, random_state=42),
-            'K-ближайших соседей': KNeighborsClassifier(n_neighbors=5)
+            "Дерево": RandomForestClassifier(n_estimators=100, random_state=42),
+            "Логистическая регрессия": LogisticRegression(
+                max_iter=1000, random_state=42
+            ),
+            "K-ближайших соседей": KNeighborsClassifier(n_neighbors=5),
         }
 
         n_metrics = []
@@ -547,22 +562,21 @@ def Analyze_of_metric(n_values, k_or_d, dist1, dist2, iterations=50):
             y_prob = clf.predict_proba(X_test)[:, 1]
             acc = accuracy_score(y_test, y_pred)
             report = classification_report(y_test, y_pred, output_dict=True)
-            n_metrics.append({
-                'Классификатор': name,
-                'Точность': acc,
-                'Precision': report['1']['precision'],
-                'Recall': report['1']['recall'],
-                'F1-score': report['1']['f1-score']
-            })
-        results.append({
-            'n': n,
-            'Метрики': pd.DataFrame(n_metrics)
-        })
+            n_metrics.append(
+                {
+                    "Классификатор": name,
+                    "Точность": acc,
+                    "Precision": report["1"]["precision"],
+                    "Recall": report["1"]["recall"],
+                    "F1-score": report["1"]["f1-score"],
+                }
+            )
+        results.append({"n": n, "Метрики": pd.DataFrame(n_metrics)})
 
     print("\nРезультаты анализа метрик для различных n:")
     for result in results:
         print(f"\nРазмер выборки n = {result['n']}")
-        print(result['Метрики'])
+        print(result["Метрики"])
 
 
 # ==========================================================================================================
@@ -580,52 +594,56 @@ if __name__ == "__main__":
     # =========== 1 ======================
     print("Анализ четырех функций по их параметрам")
     param_range = np.linspace(2, 30, 100)
-    analyze_of_params(param_range, n, input_k, 'max_degree', 'stud')
-    analyze_of_params(param_range, n, input_k, 'max_degree', 'lap')
+    analyze_of_params(param_range, n, input_k, "max_degree", "stud")
+    analyze_of_params(param_range, n, input_k, "max_degree", "lap")
 
     param_range = np.linspace(2, 30, 100)
-    analyze_of_params(param_range, n, input_d, 'size_max_independent_set', 'stud')
-    analyze_of_params(param_range, n, input_d, 'size_max_independent_set', 'lap')
+    analyze_of_params(param_range, n, input_d, "size_max_independent_set", "stud")
+    analyze_of_params(param_range, n, input_d, "size_max_independent_set", "lap")
 
     param_range = np.linspace(0.5, 10, 70)
-    analyze_of_params(param_range, n, input_k, 'number_of_connectivity_components', 'weib')
-    analyze_of_params(param_range, n, input_k, 'number_of_connectivity_components', 'exp')
+    analyze_of_params(
+        param_range, n, input_k, "number_of_connectivity_components", "weib"
+    )
+    analyze_of_params(
+        param_range, n, input_k, "number_of_connectivity_components", "exp"
+    )
 
     param_range = np.linspace(0.5, 10, 60)
-    analyze_of_params(param_range, n, input_d, 'size_max_clique', 'weib')
-    analyze_of_params(param_range, n, input_d, 'size_max_clique', 'exp')
+    analyze_of_params(param_range, n, input_d, "size_max_clique", "weib")
+    analyze_of_params(param_range, n, input_d, "size_max_clique", "exp")
 
     # =========== 2 ======================
     print("Анализ четырех функций по k, d и n")
     print("1) max_degree")
     n_range = range(50, 400, 10)
     k_range = range(2, 20)
-    analyze_for_k_and_d(par_1, n, k_range, 'stud', 'max_degree')
-    analyze_for_k_and_d(par_2, n, k_range, 'lap', 'max_degree')
-    Analyze_of_n(par_1, 'stud', n_range, input_k, 'max_degree')
-    Analyze_of_n(par_2, 'lap', n_range, input_k, 'max_degree')
+    analyze_for_k_and_d(par_1, n, k_range, "stud", "max_degree")
+    analyze_for_k_and_d(par_2, n, k_range, "lap", "max_degree")
+    Analyze_of_n(par_1, "stud", n_range, input_k, "max_degree")
+    Analyze_of_n(par_2, "lap", n_range, input_k, "max_degree")
 
     print("2) size_max_independent_set")
     d_range = np.linspace(0.05, 10, 30)
-    analyze_for_k_and_d(par_2, n, d_range, 'lap', 'size_max_independent_set')
-    analyze_for_k_and_d(par_1, n, d_range, 'stud', 'size_max_independent_set')
-    Analyze_of_n(par_2, 'lap', n_range, input_d, 'size_max_independent_set')
-    Analyze_of_n(par_2, 'stud', n_range, input_d, 'size_max_independent_set')
+    analyze_for_k_and_d(par_2, n, d_range, "lap", "size_max_independent_set")
+    analyze_for_k_and_d(par_1, n, d_range, "stud", "size_max_independent_set")
+    Analyze_of_n(par_2, "lap", n_range, input_d, "size_max_independent_set")
+    Analyze_of_n(par_2, "stud", n_range, input_d, "size_max_independent_set")
 
     print("3) number_of_connectivity_components")
     n_range = range(50, 100, 2)
     k_range = range(2, 20)
-    analyze_for_k_and_d(par_3, n, k_range, 'exp', 'number_of_connectivity_components')
-    analyze_for_k_and_d(par_4, n, k_range, 'weib', 'number_of_connectivity_components')
-    Analyze_of_n(par_3, 'exp', n_range, input_k, 'number_of_connectivity_components')
-    Analyze_of_n(par_4, 'weib', n_range, input_k, 'number_of_connectivity_components')
+    analyze_for_k_and_d(par_3, n, k_range, "exp", "number_of_connectivity_components")
+    analyze_for_k_and_d(par_4, n, k_range, "weib", "number_of_connectivity_components")
+    Analyze_of_n(par_3, "exp", n_range, input_k, "number_of_connectivity_components")
+    Analyze_of_n(par_4, "weib", n_range, input_k, "number_of_connectivity_components")
 
     print("4) size_max_clique")
     d_range = np.linspace(0.05, 10, 30)
-    analyze_for_k_and_d(par_3, n, d_range, 'exp', 'size_max_clique')
-    analyze_for_k_and_d(par_4, n, d_range, 'weib', 'size_max_clique')
-    Analyze_of_n(par_3, 'exp', n_range, input_d, 'size_max_clique')
-    Analyze_of_n(par_4, 'weib', n_range, input_d, 'size_max_clique')
+    analyze_for_k_and_d(par_3, n, d_range, "exp", "size_max_clique")
+    analyze_for_k_and_d(par_4, n, d_range, "weib", "size_max_clique")
+    Analyze_of_n(par_3, "exp", n_range, input_d, "size_max_clique")
+    Analyze_of_n(par_4, "weib", n_range, input_d, "size_max_clique")
 
     # =========== 3 ======================
     print("Построение множества А1 и А2")
@@ -635,10 +653,10 @@ if __name__ == "__main__":
     d = 0.2
     iterations = 1000
 
-    A1_knn = find_A_1(n, 'knn', k, iterations)
-    A1_dist = find_A_1(n, 'dist', d, iterations)
-    A2_knn = find_A_2(n, 'knn', k, iterations)
-    A2_dist = find_A_2(n, 'dist', d, iterations)
+    A1_knn = find_A_1(n, "knn", k, iterations)
+    A1_dist = find_A_1(n, "dist", d, iterations)
+    A2_knn = find_A_2(n, "knn", k, iterations)
+    A2_dist = find_A_2(n, "dist", d, iterations)
 
     # ============= Часть 2 =================
 
@@ -647,18 +665,18 @@ if __name__ == "__main__":
     print("Исследование важности характеристик")
     print("\n")
     print("1)Важность признаков у stud и lap")
-    clf_knn, df_knn = build_classifier(n, input_d, 'stud', 'lap', 'har_analyse')
+    clf_knn, df_knn = build_classifier(n, input_d, "stud", "lap", "har_analyse")
     print("\n")
     print("2)Важность признаков у exp и weib")
-    clf_dist, df_dist = build_classifier(n, input_d, 'weib', 'exp', 'har_analyse')
+    clf_dist, df_dist = build_classifier(n, input_d, "weib", "exp", "har_analyse")
     print("\n")
     print("Анализ важности признаков в зависимости от размера выборки:")
     n_range = range(20, 201, 40)
-    analyze_feature_importance_vs_n(n_range, input_d, 'stud', 'lap')
-    analyze_feature_importance_vs_n(n_range, input_d, 'weib', 'exp')
+    analyze_feature_importance_vs_n(n_range, input_d, "stud", "lap")
+    analyze_feature_importance_vs_n(n_range, input_d, "weib", "exp")
 
     # =========== 2 ======================
     n_range = [25, 100, 500]
-    Analyze_of_metric(n_range, input_d, 'stud', 'lap')
-    Analyze_of_metric(n_range, input_d, 'weib', 'exp')
+    Analyze_of_metric(n_range, input_d, "stud", "lap")
+    Analyze_of_metric(n_range, input_d, "weib", "exp")
     # =========== 3 ======================
