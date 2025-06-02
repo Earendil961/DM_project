@@ -6,5 +6,5 @@ class TestStub(unittest.TestCase):
         self.assertTrue(True, "Always pass")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     unittest.main()
