@@ -233,7 +233,6 @@ def Analyze_of_metric(n_values, k_or_d, dist1, dist2, classifier_name):
         for name, clf in classifiers.items():
             clf.fit(X_train, y_train)
             y_pred = clf.predict(X_test)
-            y_prob = clf.predict_proba(X_test)[:, 1]
             acc = accuracy_score(y_test, y_pred)
             report = classification_report(y_test, y_pred, output_dict=True)
             n_metrics.append(
