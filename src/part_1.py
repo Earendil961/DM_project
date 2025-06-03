@@ -184,9 +184,9 @@ def analyze_for_k_and_d(
         type_analyze == "max_degree"
         or type_analyze == "number_of_connectivity_components"
     ):
-        plt.xlabel(f"Parameter k value," + type_func)
+        plt.xlabel(f"Parameter k value, {type_func}")
     else:
-        plt.xlabel(f"Parameter dist value," + type_func)
+        plt.xlabel(f"Parameter dist value, {type_func}")
     plt.grid()
     plt.show()
 
@@ -229,8 +229,8 @@ def Analyze_of_n(
         t_values.append(sum_val)
     plt.figure()
     plt.plot(n_range, t_values)
+    plt.xlabel(f"Sample size n value, {type_func}")
     plt.ylabel(f"Parameter {type_analyze} value")
-    plt.xlabel(f"Sample size n value, " + type_func)
     plt.grid()
     plt.show()
 
