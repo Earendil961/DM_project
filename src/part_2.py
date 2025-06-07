@@ -1,8 +1,3 @@
-# Стандартные библиотеки
-import sys
-import os
-
-# Сторонние библиотеки
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -12,14 +7,8 @@ from sklearn.metrics import accuracy_score, classification_report
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
-# Локальные импорты
-from part_1 import (
-    create_gd,
-    max_degree,
-    number_of_connectivity_components,
-    size_max_clique,
-    size_max_independent_set,
-)
+from part_1 import (create_gd, max_degree, number_of_connectivity_components,
+                    size_max_clique, size_max_independent_set)
 
 
 def extract_multiple_features(samples, n, k_or_d, graph_type):
