@@ -256,7 +256,7 @@ def t_classifier_2(classifier, dist, n=50):
     return [true_false / (2 * n), true_true / (2 * n), accuracy]
 
 
-def Analyze_of_metric(n_values, k_or_d, dist1, dist2, classifier_name):
+def analyze_of_metric(n_values, k_or_d, dist1, dist2, classifier_name):
     """
     Анализирует метрики классификаторов для различных значений n.
 
