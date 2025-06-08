@@ -7,7 +7,7 @@ from src.part_1 import (
     find_A_1,
     find_A_2,
 )
-from part_2 import (
+from src.part_2 import (
     analyze_of_metric,
     analyze_feature_importance_vs_n,
     build_classifier,
