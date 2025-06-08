@@ -6,7 +6,7 @@ import os
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 sys.path.insert(0, project_root)
 
-from src.part_1 import (
+from src.part_1 import (  # noqa: E402
     create_gd,
     create_gk,
     max_degree,
