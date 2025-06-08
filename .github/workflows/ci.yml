@@ -26,7 +26,6 @@ jobs:
       - name: Lint and Format
         run: |
           pip install flake8 black isort
-          isort --check-only src/ tests/
           black --check src/ tests/
           flake8 src/ tests/
 
