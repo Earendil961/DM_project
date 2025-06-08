@@ -257,7 +257,7 @@ def t_classifier_2(classifier, dist, n=50):
 
 
 def Analyze_of_metric(
-    n_values, k_or_d, dist1, dist2, iterations=50, classifier_name="Дерево"
+    n_values, k_or_d, dist1, dist2, classifier_name, iterations=50
 ):
     """
     Анализирует метрики классификаторов для различных значений n.
@@ -277,9 +277,10 @@ def Analyze_of_metric(
     results = []
     classifiers = {
         "Дерево": RandomForestClassifier(n_estimators=100, random_state=42),
-        "Лог. регрессия": LogisticRegression(max_iter=1000, random_state=42),
+        "Логистическая регрессия": LogisticRegression(max_iter=1000, random_state=42),
         "K-ближайших соседей": KNeighborsClassifier(n_neighbors=5),
     }
+    selected_clf = classifiers[classifier_name]
 
     for n in n_values:
         X = []
@@ -288,8 +289,7 @@ def Analyze_of_metric(
             if dist1 == "stud":
                 samples1 = np.random.standard_t(df=3, size=n)
             elif dist1 == "lap":
-                alpha = 0.70710678118
-                samples2 = np.random.laplace(loc=0, scale=alpha, size=n)
+                samples1 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
             elif dist1 == "weib":
                 samples1 = np.random.weibull(a=1 / 2, size=n) * 0.31622776601
             elif dist1 == "exp":
@@ -302,8 +302,7 @@ def Analyze_of_metric(
             if dist2 == "stud":
                 samples2 = np.random.standard_t(df=3, size=n)
             elif dist2 == "lap":
-                alpha = 0.70710678118
-                samples2 = np.random.laplace(loc=0, scale=alpha, size=n)
+                samples2 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
             elif dist2 == "weib":
                 samples2 = np.random.weibull(a=1 / 2, size=n) * 0.31622776601
             elif dist2 == "exp":
@@ -319,6 +318,7 @@ def Analyze_of_metric(
         for name, clf in classifiers.items():
             clf.fit(X_train, y_train)
             y_pred = clf.predict(X_test)
+            y_prob = clf.predict_proba(X_test)[:, 1]
             acc = accuracy_score(y_test, y_pred)
             report = classification_report(y_test, y_pred, output_dict=True)
             n_metrics.append(
