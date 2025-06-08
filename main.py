@@ -110,10 +110,10 @@ if __name__ == "__main__":
     analyze_feature_importance_vs_n(n_range, input_d, "weib", "exp")
     # =========== 2 ======================
     n_range = [25, 100, 500]
-    classifier = Analyze_of_metric(
+    classifier = analyze_of_metric(
         n_range, input_d, "stud", "lap", "K-ближайших соседей"
     )
-    classifier_2 = Analyze_of_metric(n_range, input_d, "weib", "exp", "Дерево")
+    classifier_2 = analyze_of_metric(n_range, input_d, "weib", "exp", "Дерево")
     # =========== 3 ======================
     wrapped_classifier = create_classifier_wrapper(classifier)
     t_classifier_1(wrapped_classifier, input_d)
