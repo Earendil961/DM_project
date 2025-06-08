@@ -3,25 +3,28 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import (
-    ConfusionMatrixDisplay,
-    accuracy_score,
-    classification_report,
-    confusion_matrix,
-)
+from sklearn.metrics import (ConfusionMatrixDisplay, accuracy_score,
+                             classification_report, confusion_matrix)
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
-from part_1 import (
-    create_gd,
-    max_degree,
-    number_of_connectivity_components,
-    size_max_clique,
-    size_max_independent_set,
-)
+from part_1 import (create_gd, max_degree, number_of_connectivity_components,
+                    size_max_clique, size_max_independent_set)
 
 
 def extract_multiple_features(samples, n, k_or_d, graph_type):
+    """
+    Извлекает несколько признаков из графа в зависимости от его типа.
+
+    Параметры:
+        samples (np.array): Массив сэмплов для построения графа
+        n (int): Размер графа
+        k_or_d: Параметр k или d для построения графа
+        graph_type (str): Тип графа ("stud" или другой)
+
+    Возвращает:
+        list: Список извлеченных признаков
+    """
     features = []
     if graph_type == "stud":
         graph = create_gd(samples, n, k_or_d)
@@ -35,6 +38,20 @@ def extract_multiple_features(samples, n, k_or_d, graph_type):
 
 
 def build_classifier(n, k_or_d, dist1, dist2, type1, iterations=50):
+    """
+    Строит классификатор на основе признаков графов для двух распределений.
+
+    Параметры:
+        n (int): Размер графа
+        k_or_d: Параметр k или d для построения графа
+        dist1 (str): Первое распределение ("stud", "lap", "weib", "exp")
+        dist2 (str): Второе распределение
+        type1 (str): Тип анализа ("har_analyse" или другой)
+        iterations (int): Количество итераций
+
+    Возвращает:
+        tuple: (обученный классификатор, DataFrame с признаками и метками)
+    """
     X = []
     y = []
 
@@ -87,6 +104,17 @@ def build_classifier(n, k_or_d, dist1, dist2, type1, iterations=50):
 
 
 def analyze_feature_importance_vs_n(n_range, k_or_d, dist1, dist2):
+    """
+    Анализирует зависимость важности признаков от размера графа n.
+
+    Параметры:
+        n_range (iterable): Диапазон значений n для анализа
+        k_or_d: Параметр k или d для построения графа
+        dist1 (str): Первое распределение
+        dist2 (str): Второе распределение
+
+    Выводит график зависимости важности признаков от n.
+    """
     importance_results = {}
 
     for n in n_range:
@@ -108,6 +136,17 @@ def analyze_feature_importance_vs_n(n_range, k_or_d, dist1, dist2):
 
 
 def t_classifier_1(classifier, dist, n=50):
+    """
+    Тестирует классификатор для распределений Стьюдента и Лапласа.
+
+    Параметры:
+        classifier: Обученный классификатор
+        dist: Параметр распределения
+        n (int): Размер выборки
+
+    Возвращает:
+        list: [ошибка первого рода, мощность, точность]
+    """
     targets = [1] * n + [0] * n
     true_true = 0
     true_false = 0
@@ -153,6 +192,17 @@ def t_classifier_1(classifier, dist, n=50):
 
 
 def t_classifier_2(classifier, dist, n=50):
+    """
+    Тестирует классификатор для распределений Вейбулла и экспоненциального.
+
+    Параметры:
+        classifier: Обученный классификатор
+        dist: Параметр распределения
+        n (int): Размер выборки
+
+    Возвращает:
+        list: [ошибка первого рода, мощность, точность]
+    """
     targets = [1] * n + [0] * n
     true_true = 0
     true_false = 0
@@ -200,13 +250,27 @@ def t_classifier_2(classifier, dist, n=50):
 def Analyze_of_metric(
     n_values, k_or_d, dist1, dist2, iterations=50, classifier_name="Дерево"
 ):
+    """
+    Анализирует метрики классификаторов для различных значений n.
+
+    Параметры:
+        n_values (iterable): Значения n для анализа
+        k_or_d: Параметр k или d для построения графа
+        dist1 (str): Первое распределение
+        dist2 (str): Второе распределение
+        iterations (int): Количество итераций
+        classifier_name (str): Название классификатора
+        ("Дерево", "Лог. регрессия", "K-ближайших соседей")
+
+    Возвращает:
+        Обученный классификатор и выводит результаты анализа
+    """
     results = []
     classifiers = {
         "Дерево": RandomForestClassifier(n_estimators=100, random_state=42),
-        "Логистическая регрессия": LogisticRegression(max_iter=1000, random_state=42),
+        "Лог. регрессия": LogisticRegression(max_iter=1000, random_state=42),
         "K-ближайших соседей": KNeighborsClassifier(n_neighbors=5),
     }
-    selected_clf = classifiers[classifier_name]
 
     for n in n_values:
         X = []
@@ -215,7 +279,8 @@ def Analyze_of_metric(
             if dist1 == "stud":
                 samples1 = np.random.standard_t(df=3, size=n)
             elif dist1 == "lap":
-                samples1 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
+                alpha = 0.70710678118
+                samples2 = np.random.laplace(loc=0, scale=alpha, size=n)
             elif dist1 == "weib":
                 samples1 = np.random.weibull(a=1 / 2, size=n) * 0.31622776601
             elif dist1 == "exp":
@@ -228,7 +293,8 @@ def Analyze_of_metric(
             if dist2 == "stud":
                 samples2 = np.random.standard_t(df=3, size=n)
             elif dist2 == "lap":
-                samples2 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
+                alpha = 0.70710678118
+                samples2 = np.random.laplace(loc=0, scale=alpha, size=n)
             elif dist2 == "weib":
                 samples2 = np.random.weibull(a=1 / 2, size=n) * 0.31622776601
             elif dist2 == "exp":
@@ -236,7 +302,6 @@ def Analyze_of_metric(
             features2 = extract_multiple_features(samples2, n, k_or_d, dist1)
             X.append(features2)
             y.append(1)
-
         X_train, X_test, y_train, y_test = train_test_split(
             X, y, test_size=0.3, random_state=42
         )
@@ -245,7 +310,6 @@ def Analyze_of_metric(
         for name, clf in classifiers.items():
             clf.fit(X_train, y_train)
             y_pred = clf.predict(X_test)
-            y_prob = clf.predict_proba(X_test)[:, 1]
             acc = accuracy_score(y_test, y_pred)
             report = classification_report(y_test, y_pred, output_dict=True)
             n_metrics.append(
@@ -278,6 +342,16 @@ def Analyze_of_metric(
 
 
 def create_classifier_wrapper(clf):
+    """
+    Создает обертку для классификатора для удобного предсказания.
+
+    Параметры:
+        clf: Обученный классификатор
+
+    Возвращает:
+        function: Функцию-обертку для предсказания
+    """
+
     def wrapper(a, b):
         features = np.array([[a, b]])
         return clf.predict(features)[0]
