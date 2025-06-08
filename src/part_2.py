@@ -193,11 +193,11 @@ def t_classifier_1(classifier, dist, n=50):
                 false_true += 1
             else:
                 false_false += 1
-    print("Ошибка первого рода: ", true_false / 2 * n)
-    print("Мощность: ", true_true / 2 * n)
-    print("Точность: ", (true_true + false_false) / 2 * n)
-    accuracy = (true_true + false_false) / 2 * n
-    return [true_false / 2 * n, true_true / 2 * n, accuracy]
+    print("Ошибка первого рода: ", true_false / (2 * n))
+    print("Мощность: ", true_true / (2 * n))
+    print("Точность: ", (true_true + false_false) / (2 * n))
+    accuracy = (true_true + false_false) / (2 * n)
+    return [true_false / (2 * n), true_true / (2 * n), accuracy]
 
 
 def t_classifier_2(classifier, dist, n=50):
@@ -249,11 +249,11 @@ def t_classifier_2(classifier, dist, n=50):
                 false_true += 1
             else:
                 false_false += 1
-    print("Ошибка первого рода: ", true_false / 2 * n)
-    print("Мощность: ", true_true / 2 * n)
-    print("Точность: ", (true_true + false_false) / 2 * n)
-    accuracy = (true_true + false_false) / 2 * n
-    return [true_false / 2 * n, true_true / 2 * n, accuracy]
+    print("Ошибка первого рода: ", true_false / (2 * n))
+    print("Мощность: ", true_true / (2 * n))
+    print("Точность: ", (true_true + false_false) / (2 * n))
+    accuracy = (true_true + false_false) / (2 * n)
+    return [true_false / (2 * n), true_true / (2 * n), accuracy]
 
 
 def Analyze_of_metric(n_values, k_or_d, dist1, dist2, classifier_name):
