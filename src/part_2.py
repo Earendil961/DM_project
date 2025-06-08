@@ -3,7 +3,12 @@ import numpy as np
 import pandas as pd
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, classification_report
+from sklearn.metrics import (
+    ConfusionMatrixDisplay,
+    accuracy_score,
+    classification_report,
+    confusion_matrix,
+)
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
@@ -17,7 +22,6 @@ from part_1 import (
 
 
 def extract_multiple_features(samples, n, k_or_d, graph_type):
-    """Извлекает признаки графа в зависимости от типа распределения."""
     features = []
     if graph_type == "stud":
         graph = create_gd(samples, n, k_or_d)
@@ -31,17 +35,14 @@ def extract_multiple_features(samples, n, k_or_d, graph_type):
 
 
 def build_classifier(n, k_or_d, dist1, dist2, type1, iterations=50):
-    """Строит классификатор на основе признаков графа."""
     X = []
     y = []
 
-    for _ in range(iterations):
+    for i in range(iterations):
         if dist1 == "stud":
             samples1 = np.random.standard_t(df=3, size=n)
         elif dist1 == "lap":
-            samples1 = np.random.laplace(
-                loc=0, scale=0.70710678118, size=n
-            )
+            samples1 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
         elif dist1 == "weib":
             samples1 = np.random.weibull(a=1 / 2, size=n) * 0.31622776601
         elif dist1 == "exp":
@@ -54,9 +55,7 @@ def build_classifier(n, k_or_d, dist1, dist2, type1, iterations=50):
         if dist2 == "stud":
             samples2 = np.random.standard_t(df=3, size=n)
         elif dist2 == "lap":
-            samples2 = np.random.laplace(
-                loc=0, scale=0.70710678118, size=n
-            )
+            samples2 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
         elif dist2 == "weib":
             samples2 = np.random.weibull(a=1 / 2, size=n) * 0.31622776601
         elif dist2 == "exp":
@@ -69,8 +68,8 @@ def build_classifier(n, k_or_d, dist1, dist2, type1, iterations=50):
     if dist1 == "stud":
         feature_names = ["max_degree", "size_max_independent_set"]
     else:
-        num_conn = "number_of_connectivity_components"
-        feature_names = [num_conn, "size_max_clique"]
+        number = "number_of_connectivity_components"
+        feature_names = [number, "size_max_clique"]
     df = pd.DataFrame(X, columns=feature_names)
     df["target"] = y
 
@@ -88,12 +87,11 @@ def build_classifier(n, k_or_d, dist1, dist2, type1, iterations=50):
 
 
 def analyze_feature_importance_vs_n(n_range, k_or_d, dist1, dist2):
-    """Анализирует важность признаков в зависимости от размера выборки."""
     importance_results = {}
 
     for n in n_range:
         n_name = "n_analyse"
-        clf, _ = build_classifier(n, k_or_d, dist1, dist2, n_name, 50)
+        clf, df = build_classifier(n, k_or_d, dist1, dist2, n_name, 50)
         importance_results[n] = clf.feature_importances_
 
     plt.figure(figsize=(12, 6))
@@ -110,92 +108,102 @@ def analyze_feature_importance_vs_n(n_range, k_or_d, dist1, dist2):
 
 
 def t_classifier_1(classifier, dist, n=50):
-    """Тестирует классификатор для распределений Стьюдента и Лапласа."""
-    total_samples = 2 * n
-    true_positive = 0
-    true_negative = 0
-    false_positive = 0
-    false_negative = 0
-
-    for _ in range(n):
+    targets = [1] * n + [0] * n
+    true_true = 0
+    true_false = 0
+    false_true = 0
+    false_false = 0
+    for i in range(n):
         samples = np.random.standard_t(df=3, size=n)
         graph = create_gd(samples, n, dist)
         a = max_degree(n, graph)
         b = size_max_independent_set(n, graph)
         predict = classifier(a, b)
-        if predict == 1:
-            true_positive += 1
+        if predict == targets[i]:
+            if targets[i] == 1:
+                true_true += 1
+            else:
+                true_false += 1
         else:
-            false_negative += 1
-
-    for _ in range(n):
+            if targets[i] == 1:
+                false_true += 1
+            else:
+                false_false += 1
+    for i in range(n, 2 * n):
         samples = np.random.laplace(loc=0, scale=0.70710678118, size=n)
         graph = create_gd(samples, n, dist)
         a = max_degree(n, graph)
         b = size_max_independent_set(n, graph)
         predict = classifier(a, b)
-        if predict == 0:
-            true_negative += 1
+        if predict == targets[i]:
+            if targets[i] == 1:
+                true_true += 1
+            else:
+                true_false += 1
         else:
-            false_positive += 1
-
-    type1_error = false_positive / n
-    power = true_positive / n
-    accuracy = (true_positive + true_negative) / total_samples
-
-    print(f"Ошибка первого рода: {type1_error:.4f}")
-    print(f"Мощность: {power:.4f}")
-    print(f"Точность: {accuracy:.4f}")
-    return [type1_error, power, accuracy]
+            if targets[i] == 1:
+                false_true += 1
+            else:
+                false_false += 1
+    print("Ошибка первого рода: ", true_false / 2 * n)
+    print("Мощность: ", true_true / 2 * n)
+    print("Точность: ", (true_true + false_false) / 2 * n)
+    accuracy = (true_true + false_false) / 2 * n
+    return [true_false / 2 * n, true_true / 2 * n, accuracy]
 
 
 def t_classifier_2(classifier, dist, n=50):
-    """Тестирует классификатор для распределений Вейбулла и экспоненциального."""
-    total_samples = 2 * n
-    true_positive = 0
-    true_negative = 0
-    false_positive = 0
-    false_negative = 0
-
-    for _ in range(n):
+    targets = [1] * n + [0] * n
+    true_true = 0
+    true_false = 0
+    false_true = 0
+    false_false = 0
+    for i in range(n):
         samples = np.random.weibull(a=1 / 2, size=n) * 0.31622776601
         graph = create_gd(samples, n, dist)
         a = number_of_connectivity_components(graph)
         b = size_max_clique(graph)
         predict = classifier(a, b)
-        if predict == 1:
-            true_positive += 1
+        if predict == targets[i]:
+            if targets[i] == 1:
+                true_true += 1
+            else:
+                true_false += 1
         else:
-            false_negative += 1
-
-    for _ in range(n):
+            if targets[i] == 1:
+                false_true += 1
+            else:
+                false_false += 1
+    for i in range(n, 2 * n):
         samples = np.random.exponential(scale=1, size=n)
         graph = create_gd(samples, n, dist)
         a = number_of_connectivity_components(graph)
         b = size_max_clique(graph)
         predict = classifier(a, b)
-        if predict == 0:
-            true_negative += 1
+        if predict == targets[i]:
+            if targets[i] == 1:
+                true_true += 1
+            else:
+                true_false += 1
         else:
-            false_positive += 1
+            if targets[i] == 1:
+                false_true += 1
+            else:
+                false_false += 1
+    print("Ошибка первого рода: ", true_false / 2 * n)
+    print("Мощность: ", true_true / 2 * n)
+    print("Точность: ", (true_true + false_false) / 2 * n)
+    accuracy = (true_true + false_false) / 2 * n
+    return [true_false / 2 * n, true_true / 2 * n, accuracy]
 
-    type1_error = false_positive / n
-    power = true_positive / n
-    accuracy = (true_positive + true_negative) / total_samples
 
-    print(f"Ошибка первого рода: {type1_error:.4f}")
-    print(f"Мощность: {power:.4f}")
-    print(f"Точность: {accuracy:.4f}")
-    return [type1_error, power, accuracy]
-
-
-def analyze_of_metric(n_values, k_or_d, dist1, dist2, classifier_name):
-    """Анализирует метрики классификаторов в зависимости от размера выборки."""
+def Analyze_of_metric(
+    n_values, k_or_d, dist1, dist2, iterations=50, classifier_name="Дерево"
+):
     results = []
-    log_params = {"max_iter": 1000, "random_state": 42}
     classifiers = {
         "Дерево": RandomForestClassifier(n_estimators=100, random_state=42),
-        "Логистическая регрессия": LogisticRegression(**log_params),
+        "Логистическая регрессия": LogisticRegression(max_iter=1000, random_state=42),
         "K-ближайших соседей": KNeighborsClassifier(n_neighbors=5),
     }
     selected_clf = classifiers[classifier_name]
@@ -203,12 +211,11 @@ def analyze_of_metric(n_values, k_or_d, dist1, dist2, classifier_name):
     for n in n_values:
         X = []
         y = []
-        for _ in range(50):
+        for i in range(iterations):
             if dist1 == "stud":
                 samples1 = np.random.standard_t(df=3, size=n)
             elif dist1 == "lap":
-                beta = 0.70710678118
-                samples1 = np.random.laplace(loc=0, scale=beta, size=n)
+                samples1 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
             elif dist1 == "weib":
                 samples1 = np.random.weibull(a=1 / 2, size=n) * 0.31622776601
             elif dist1 == "exp":
@@ -221,13 +228,11 @@ def analyze_of_metric(n_values, k_or_d, dist1, dist2, classifier_name):
             if dist2 == "stud":
                 samples2 = np.random.standard_t(df=3, size=n)
             elif dist2 == "lap":
-                beta = 0.70710678118
-                samples2 = np.random.laplace(loc=0, scale=beta, size=n)
+                samples2 = np.random.laplace(loc=0, scale=0.70710678118, size=n)
             elif dist2 == "weib":
                 samples2 = np.random.weibull(a=1 / 2, size=n) * 0.31622776601
             elif dist2 == "exp":
                 samples2 = np.random.exponential(scale=1, size=n)
-
             features2 = extract_multiple_features(samples2, n, k_or_d, dist1)
             X.append(features2)
             y.append(1)
@@ -240,10 +245,9 @@ def analyze_of_metric(n_values, k_or_d, dist1, dist2, classifier_name):
         for name, clf in classifiers.items():
             clf.fit(X_train, y_train)
             y_pred = clf.predict(X_test)
+            y_prob = clf.predict_proba(X_test)[:, 1]
             acc = accuracy_score(y_test, y_pred)
-            report = classification_report(
-                y_test, y_pred, output_dict=True
-            )
+            report = classification_report(y_test, y_pred, output_dict=True)
             n_metrics.append(
                 {
                     "Классификатор": name,
@@ -253,6 +257,15 @@ def analyze_of_metric(n_values, k_or_d, dist1, dist2, classifier_name):
                     "F1-score": report["1"]["f1-score"],
                 }
             )
+            if name == classifier_name:
+                final_classifier = clf
+                cm = confusion_matrix(y_test, y_pred)
+                disp = ConfusionMatrixDisplay(
+                    confusion_matrix=cm, display_labels=[dist1, dist2]
+                )
+                disp.plot()
+                plt.title(f"Confusion Matrix для {classifier_name} (n={n})")
+                plt.show()
 
         results.append({"n": n, "Метрики": pd.DataFrame(n_metrics)})
 
@@ -260,13 +273,11 @@ def analyze_of_metric(n_values, k_or_d, dist1, dist2, classifier_name):
     for result in results:
         print(f"\nРазмер выборки n = {result['n']}")
         print(result["Метрики"])
-    selected_clf.fit(X, y)
-    return selected_clf
+
+    return final_classifier
 
 
 def create_classifier_wrapper(clf):
-    """Создает обертку для классификатора."""
-
     def wrapper(a, b):
         features = np.array([[a, b]])
         return clf.predict(features)[0]
