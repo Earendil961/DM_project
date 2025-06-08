@@ -191,7 +191,7 @@ def analyze_for_k_and_d(
     plt.show()
 
 
-def Analyze_of_n(
+def analyze_of_n(
     par_1_or_2, type_func, n_range, input_k_or_d1, type_analyze, iterations=10
 ):
     t_values = []
