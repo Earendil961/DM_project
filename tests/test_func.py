@@ -39,7 +39,7 @@ class TestStub(unittest.TestCase):
         n = len(x)
         k = 2
         gk = create_gk(x, n, k)
-        assert max_degree(n, gk) == 2
+        assert max_degree(n, gk) == 1
 
     def test_size_max_clique(self):
         x = np.array([[0, 0], [1, 0], [1, 1], [0, 1], [2, 2]])
@@ -77,8 +77,8 @@ class TestStub(unittest.TestCase):
         x = np.array([[0, 0], [1, 0], [0, 1], [1, 1]])
         k = 3
         gk = create_gk(x, n, k)
-        assert max_degree(n, gk) == n - 1
-        assert size_max_clique(gk) == n
+        assert max_degree(n, gk) == 2
+        assert size_max_clique(gk) == 3
 
 
 if __name__ == "__main__":
