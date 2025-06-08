@@ -1,6 +1,6 @@
 import unittest
 import numpy as np
-from .part_1 import (
+from ..src.part_1 import (
     create_gd,
     create_gk,
     max_degree,
