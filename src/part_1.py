@@ -4,16 +4,16 @@ from sklearn.neighbors import NearestNeighbors
 
 
 def create_gd(x2, n, d):
-    """Create a distance graph where nodes are connected
-    if their values are within distance d.
+    """Создает граф расстояний, где узлы соединяются,
+    если их значения находятся на расстоянии не более d.
 
-    Args:
-        x2: Array of values for each node.
-        n: Number of nodes.
-        d: Maximum distance for connection.
+    Аргументы:
+        x2: Массив значений для каждого узла.
+        n: Количество узлов.
+        d: Максимальное расстояние для соединения.
 
-    Returns:
-        Adjacency matrix as a boolean numpy array.
+    Возвращает:
+        Матрицу смежности в виде булевого массива numpy.
     """
     gd = np.zeros((n, n), dtype=bool)
     for i in range(n):
@@ -25,15 +25,16 @@ def create_gd(x2, n, d):
 
 
 def create_gk(x, n, k):
-    """Create a k-nearest neighbors graph.
+    """Создает граф k ближайших соседей.
 
-    Args:
-        x: Array of node coordinates.
-        n: Number of nodes.
-        k: Number of nearest neighbors to connect.
+    Аргументы:
+        x: Массив координат узлов.
+        n: Количество узлов.
+        k: Количество ближайших соседей для соединения.
 
-    Returns:
-        Adjacency matrix as a boolean numpy array with mutual kNN connections.
+    Возвращает:
+        Матрицу смежности в виде булевого массива numpy
+        с взаимными соединениями kNN.
     """
     n_neighbors = NearestNeighbors(n_neighbors=k).fit(x)
     distances, indices = n_neighbors.kneighbors(x)
@@ -51,14 +52,15 @@ def create_gk(x, n, k):
 
 
 def size_max_independent_set(n, gd):
-    """Calculate the size of the maximum independent set using a greedy algorithm.
+    """Вычисляет размер максимального независимого множества
+    с использованием жадного алгоритма.
 
-    Args:
-        n: Number of nodes.
-        gd: Adjacency matrix of the graph.
+    Аргументы:
+        n: Количество узлов.
+        gd: Матрица смежности графа.
 
-    Returns:
-        Size of the maximum independent set.
+    Возвращает:
+        Размер максимального независимого множества.
     """
     arr = {}
     for i in range(n):
@@ -81,14 +83,14 @@ def size_max_independent_set(n, gd):
 
 
 def max_degree(n, gk):
-    """Find the maximum degree in the graph.
+    """Находит максимальную степень в графе.
 
-    Args:
-        n: Number of nodes.
-        gk: Adjacency matrix of the graph.
+    Аргументы:
+        n: Количество узлов.
+        gk: Матрица смежности графа.
 
-    Returns:
-        Maximum degree in the graph.
+    Возвращает:
+        Максимальную степень в графе.
     """
     arr = np.zeros(n)
     for i in range(n):
@@ -103,13 +105,13 @@ def max_degree(n, gk):
 
 
 def size_max_clique(adj_matrix):
-    """Find the size of the maximum clique in the graph.
+    """Находит размер максимальной клики в графе.
 
-    Args:
-        adj_matrix: Adjacency matrix of the graph.
+    Аргументы:
+        adj_matrix: Матрица смежности графа.
 
-    Returns:
-        Size of the maximum clique.
+    Возвращает:
+        Размер максимальной клики.
     """
     n = len(adj_matrix)
     max_clique = 0
@@ -127,13 +129,14 @@ def size_max_clique(adj_matrix):
 
 
 def number_of_connectivity_components(data):
-    """Count the number of connected components in the graph using DFS.
+    """Подсчитывает количество компонент связности в графе
+    с использованием DFS.
 
-    Args:
-        data: Adjacency matrix of the graph.
+    Аргументы:
+        data: Матрица смежности графа.
 
-    Returns:
-        Number of connected components.
+    Возвращает:
+        Количество компонент связности.
     """
     n = len(data)
     visited = [False] * n
@@ -155,15 +158,16 @@ def number_of_connectivity_components(data):
 def analyze_of_params(
     param_range, n, input_k_or_d, type_analyze, type_func, iterations=10
 ):
-    """Analyze how graph properties change with distribution parameters.
+    """Анализирует, как изменяются свойства графа
+    в зависимости от параметров распределения.
 
-    Args:
-        param_range: Range of parameter values to test.
-        n: Number of nodes.
-        input_k_or_d: k for kNN or d for distance graph.
-        type_analyze: Which graph property to analyze.
-        type_func: Type of distribution ('stud', 'lap', 'weib', 'exp').
-        iterations: Number of iterations per parameter value.
+    Аргументы:
+        param_range: Диапазон значений параметра для тестирования.
+        n: Количество узлов.
+        input_k_or_d: k для kNN или d для графа расстояний.
+        type_analyze: Какое свойство графа анализировать.
+        type_func: Тип распределения ('stud', 'lap', 'weib', 'exp').
+        iterations: Количество итераций на каждое значение параметра.
     """
     t_values = []
     t_val = -1
@@ -208,15 +212,16 @@ def analyze_of_params(
 def analyze_for_k_and_d(
     par_1_or_2, n, input_k_or_d_mas, type_func, type_analyze, iterations=10
 ):
-    """Analyze how graph properties change with k or d values.
+    """Анализирует, как изменяются свойства графа
+    в зависимости от значений k или d.
 
-    Args:
-        par_1_or_2: Distribution parameter.
-        n: Number of nodes.
-        input_k_or_d_mas: Range of k or d values to test.
-        type_func: Type of distribution ('stud', 'lap', 'weib', 'exp').
-        type_analyze: Which graph property to analyze.
-        iterations: Number of iterations per value.
+    Аргументы:
+        par_1_or_2: Параметр распределения.
+        n: Количество узлов.
+        input_k_or_d_mas: Диапазон значений k или d для тестирования.
+        type_func: Тип распределения ('stud', 'lap', 'weib', 'exp').
+        type_analyze: Какое свойство графа анализировать.
+        iterations: Количество итераций на каждое значение.
     """
     t_values = [0] * len(input_k_or_d_mas)
     t_val = -1
@@ -269,15 +274,16 @@ def analyze_for_k_and_d(
 def Analyze_of_n(
     par_1_or_2, type_func, n_range, input_k_or_d1, type_analyze, iterations=10
 ):
-    """Analyze how graph properties change with sample size n.
+    """Анализирует, как изменяются свойства графа
+    в зависимости от размера выборки n.
 
-    Args:
-        par_1_or_2: Distribution parameter.
-        type_func: Type of distribution ('stud', 'lap', 'weib', 'exp').
-        n_range: Range of sample sizes to test.
-        input_k_or_d1: k for kNN or d for distance graph.
-        type_analyze: Which graph property to analyze.
-        iterations: Number of iterations per sample size.
+    Аргументы:
+        par_1_or_2: Параметр распределения.
+        type_func: Тип распределения ('stud', 'lap', 'weib', 'exp').
+        n_range: Диапазон размеров выборки для тестирования.
+        input_k_or_d1: k для kNN или d для графа расстояний.
+        type_analyze: Какое свойство графа анализировать.
+        iterations: Количество итераций на каждый размер выборки.
     """
     t_values = []
     t_val = -1
@@ -321,17 +327,17 @@ def Analyze_of_n(
 
 
 def find_A_1(n, graph_type, input_k_or_d1, iterations):
-    """Find critical region for hypothesis testing
-    between Student's t and Laplace distributions.
+    """Находит критическую область для проверки гипотез
+    между распределениями Стьюдента и Лапласа.
 
-    Args:
-        n: Sample size.
-        graph_type: Type of graph ('knn' or other).
-        input_k_or_d1: k for kNN or d for distance graph.
-        iterations: Number of iterations.
+    Аргументы:
+        n: Размер выборки.
+        graph_type: Тип графа ('knn' или другой).
+        input_k_or_d1: k для kNN или d для графа расстояний.
+        iterations: Количество итераций.
 
-    Returns:
-        List of values defining the critical region.
+    Возвращает:
+        Список значений, определяющих критическую область.
     """
     values1 = {}
     values2 = {}
@@ -382,17 +388,17 @@ def find_A_1(n, graph_type, input_k_or_d1, iterations):
 
 
 def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
-    """Find critical region for hypothesis testing
-    between Weibull and Exponential distributions.
+    """Находит критическую область для проверки гипотез
+    между распределениями Вейбулла и Экспоненциальным.
 
-    Args:
-        n: Sample size.
-        graph_tipe: Type of graph ('knn' or other).
-        input_k_or_d1: k for kNN or d for distance graph.
-        iterations: Number of iterations.
+    Аргументы:
+        n: Размер выборки.
+        graph_tipe: Тип графа ('knn' или другой).
+        input_k_or_d1: k для kNN или d для графа расстояний.
+        iterations: Количество итераций.
 
-    Returns:
-        List of values defining the critical region.
+    Возвращает:
+        Список значений, определяющих критическую область.
     """
     values1 = {}
     values2 = {}
