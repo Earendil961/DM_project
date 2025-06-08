@@ -4,6 +4,17 @@ from sklearn.neighbors import NearestNeighbors
 
 
 def create_gd(x2, n, d):
+    """Create a distance graph where nodes are connected
+    if their values are within distance d.
+
+    Args:
+        x2: Array of values for each node.
+        n: Number of nodes.
+        d: Maximum distance for connection.
+
+    Returns:
+        Adjacency matrix as a boolean numpy array.
+    """
     gd = np.zeros((n, n), dtype=bool)
     for i in range(n):
         for j in range(n):
@@ -14,6 +25,16 @@ def create_gd(x2, n, d):
 
 
 def create_gk(x, n, k):
+    """Create a k-nearest neighbors graph.
+
+    Args:
+        x: Array of node coordinates.
+        n: Number of nodes.
+        k: Number of nearest neighbors to connect.
+
+    Returns:
+        Adjacency matrix as a boolean numpy array with mutual kNN connections.
+    """
     n_neighbors = NearestNeighbors(n_neighbors=k).fit(x)
     distances, indices = n_neighbors.kneighbors(x)
     gk = np.zeros((n, n), dtype=bool)
@@ -30,6 +51,15 @@ def create_gk(x, n, k):
 
 
 def size_max_independent_set(n, gd):
+    """Calculate the size of the maximum independent set using a greedy algorithm.
+
+    Args:
+        n: Number of nodes.
+        gd: Adjacency matrix of the graph.
+
+    Returns:
+        Size of the maximum independent set.
+    """
     arr = {}
     for i in range(n):
         arr[i] = []
@@ -51,6 +81,15 @@ def size_max_independent_set(n, gd):
 
 
 def max_degree(n, gk):
+    """Find the maximum degree in the graph.
+
+    Args:
+        n: Number of nodes.
+        gk: Adjacency matrix of the graph.
+
+    Returns:
+        Maximum degree in the graph.
+    """
     arr = np.zeros(n)
     for i in range(n):
         for j in range(n):
@@ -64,6 +103,14 @@ def max_degree(n, gk):
 
 
 def size_max_clique(adj_matrix):
+    """Find the size of the maximum clique in the graph.
+
+    Args:
+        adj_matrix: Adjacency matrix of the graph.
+
+    Returns:
+        Size of the maximum clique.
+    """
     n = len(adj_matrix)
     max_clique = 0
     for i in range(n):
@@ -80,6 +127,14 @@ def size_max_clique(adj_matrix):
 
 
 def number_of_connectivity_components(data):
+    """Count the number of connected components in the graph using DFS.
+
+    Args:
+        data: Adjacency matrix of the graph.
+
+    Returns:
+        Number of connected components.
+    """
     n = len(data)
     visited = [False] * n
     count = 0
@@ -100,6 +155,16 @@ def number_of_connectivity_components(data):
 def analyze_of_params(
     param_range, n, input_k_or_d, type_analyze, type_func, iterations=10
 ):
+    """Analyze how graph properties change with distribution parameters.
+
+    Args:
+        param_range: Range of parameter values to test.
+        n: Number of nodes.
+        input_k_or_d: k for kNN or d for distance graph.
+        type_analyze: Which graph property to analyze.
+        type_func: Type of distribution ('stud', 'lap', 'weib', 'exp').
+        iterations: Number of iterations per parameter value.
+    """
     t_values = []
     t_val = -1
     samples = []
@@ -143,6 +208,16 @@ def analyze_of_params(
 def analyze_for_k_and_d(
     par_1_or_2, n, input_k_or_d_mas, type_func, type_analyze, iterations=10
 ):
+    """Analyze how graph properties change with k or d values.
+
+    Args:
+        par_1_or_2: Distribution parameter.
+        n: Number of nodes.
+        input_k_or_d_mas: Range of k or d values to test.
+        type_func: Type of distribution ('stud', 'lap', 'weib', 'exp').
+        type_analyze: Which graph property to analyze.
+        iterations: Number of iterations per value.
+    """
     t_values = [0] * len(input_k_or_d_mas)
     t_val = -1
     samples = []
@@ -194,6 +269,16 @@ def analyze_for_k_and_d(
 def Analyze_of_n(
     par_1_or_2, type_func, n_range, input_k_or_d1, type_analyze, iterations=10
 ):
+    """Analyze how graph properties change with sample size n.
+
+    Args:
+        par_1_or_2: Distribution parameter.
+        type_func: Type of distribution ('stud', 'lap', 'weib', 'exp').
+        n_range: Range of sample sizes to test.
+        input_k_or_d1: k for kNN or d for distance graph.
+        type_analyze: Which graph property to analyze.
+        iterations: Number of iterations per sample size.
+    """
     t_values = []
     t_val = -1
     samples = []
@@ -236,6 +321,18 @@ def Analyze_of_n(
 
 
 def find_A_1(n, graph_type, input_k_or_d1, iterations):
+    """Find critical region for hypothesis testing
+    between Student's t and Laplace distributions.
+
+    Args:
+        n: Sample size.
+        graph_type: Type of graph ('knn' or other).
+        input_k_or_d1: k for kNN or d for distance graph.
+        iterations: Number of iterations.
+
+    Returns:
+        List of values defining the critical region.
+    """
     values1 = {}
     values2 = {}
     for i in range(iterations):
@@ -285,6 +382,18 @@ def find_A_1(n, graph_type, input_k_or_d1, iterations):
 
 
 def find_A_2(n, graph_tipe, input_k_or_d1, iterations):
+    """Find critical region for hypothesis testing
+    between Weibull and Exponential distributions.
+
+    Args:
+        n: Sample size.
+        graph_tipe: Type of graph ('knn' or other).
+        input_k_or_d1: k for kNN or d for distance graph.
+        iterations: Number of iterations.
+
+    Returns:
+        List of values defining the critical region.
+    """
     values1 = {}
     values2 = {}
     for i in range(iterations):
