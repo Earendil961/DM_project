@@ -2,7 +2,7 @@ import numpy as np
 
 from part_1 import (
     analyze_for_k_and_d,
-    analyze_of_n,
+    Analyze_of_n,
     analyze_of_params,
     find_A_1,
     find_A_2,
@@ -54,30 +54,30 @@ if __name__ == "__main__":
     k_range = range(2, 20)
     analyze_for_k_and_d(par_1, n, k_range, "stud", "max_degree")
     analyze_for_k_and_d(par_2, n, k_range, "lap", "max_degree")
-    analyze_of_n(par_1, "stud", n_range, input_k, "max_degree")
-    analyze_of_n(par_2, "lap", n_range, input_k, "max_degree")
+    Analyze_of_n(par_1, "stud", n_range, input_k, "max_degree")
+    Analyze_of_n(par_2, "lap", n_range, input_k, "max_degree")
 
     print("2) size_max_independent_set")
     d_range = np.linspace(0.05, 10, 30)
     analyze_for_k_and_d(par_2, n, d_range, "lap", "size_max_independent_set")
     analyze_for_k_and_d(par_1, n, d_range, "stud", "size_max_independent_set")
-    analyze_of_n(par_2, "lap", n_range, input_d, "size_max_independent_set")
-    analyze_of_n(par_2, "stud", n_range, input_d, "size_max_independent_set")
+    Analyze_of_n(par_2, "lap", n_range, input_d, "size_max_independent_set")
+    Analyze_of_n(par_2, "stud", n_range, input_d, "size_max_independent_set")
 
     print("3) number_of_connectivity_components")
     n_range = range(50, 100, 2)
     k_range = range(2, 20)
     analyze_for_k_and_d(par_3, n, k_range, "exp", "number_of_connectivity_components")
     analyze_for_k_and_d(par_4, n, k_range, "weib", "number_of_connectivity_components")
-    analyze_of_n(par_3, "exp", n_range, input_k, "number_of_connectivity_components")
-    analyze_of_n(par_4, "weib", n_range, input_k, "number_of_connectivity_components")
+    Analyze_of_n(par_3, "exp", n_range, input_k, "number_of_connectivity_components")
+    Analyze_of_n(par_4, "weib", n_range, input_k, "number_of_connectivity_components")
 
     print("4) size_max_clique")
     d_range = np.linspace(0.05, 10, 30)
     analyze_for_k_and_d(par_3, n, d_range, "exp", "size_max_clique")
     analyze_for_k_and_d(par_4, n, d_range, "weib", "size_max_clique")
-    analyze_of_n(par_3, "exp", n_range, input_d, "size_max_clique")
-    analyze_of_n(par_4, "weib", n_range, input_d, "size_max_clique")
+    Analyze_of_n(par_3, "exp", n_range, input_d, "size_max_clique")
+    Analyze_of_n(par_4, "weib", n_range, input_d, "size_max_clique")
 
     # =========== 3 ======================
     print("Построение множества А1 и А2")
