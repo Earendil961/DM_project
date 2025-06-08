@@ -1,6 +1,6 @@
 import numpy as np
 
-from part_1 import (
+from src.part_1 import (
     analyze_for_k_and_d,
     analyze_of_n,
     analyze_of_params,
