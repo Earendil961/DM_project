@@ -1,6 +1,8 @@
 import unittest
 import numpy as np
-from ..src.part_1 import (
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from src.part_1 import (
     create_gd,
     create_gk,
     max_degree,
